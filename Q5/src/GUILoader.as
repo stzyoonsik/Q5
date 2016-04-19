@@ -17,7 +17,7 @@ package
 		private var _completeFunc:Function;	
 		private var _urlArray:Vector.<String> = new Vector.<String>;					//파일명이 담긴 배열
 		private var _imageDataArray:Vector.<ImageData> = new Vector.<ImageData>;			//ImageData가 담긴 배열 
-		private var array:Vector.<String> = new Vector.<String>;
+		//private var array:Vector.<String> = new Vector.<String>;
 		private var _fileCount:int;
 		
 		public function get imageDataArray():Vector.<ImageData>
@@ -47,9 +47,11 @@ package
 			_completeFunc = cFunc;
 			
 			var array:Array = new Array();
-			getResource();
-			
-			//countImageFile(array);
+//			getResource();			
+//			countImageFile(array);
+//			buildLoader();
+			array = getResource();
+			countImageFile(array);
 			buildLoader();
 		}
 		
@@ -99,10 +101,10 @@ package
 		 */
 		public function buildLoader():void
 		{
-			for(var i:int = 0; i<array.length; ++i)
+			for(var i:int = 0; i<_urlArray.length; ++i)
 			{
 				var loader:Loader = new Loader();				
-				loader.load(new URLRequest(array[i]));
+				loader.load(new URLRequest(_urlArray[i]));
 				loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoaderComplete);				
 				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaderFailed);
 				
@@ -117,28 +119,13 @@ package
 		 * @return 폴더 안의 각각의 파일들
 		 * 
 		 */
-		public function getResource():void
+		public function getResource():Array
 		{
-			//var directory:File = File.applicationDirectory.resolvePath("resources");
-			//var directory:File = File.
-				//https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/arrowDown.png
-			//trace(directory.url);
-			//var array:Array = directory.getDirectoryListing();			
-			
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/arrowDown.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/arrowUp.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/content.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/deleteButton.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/loadButton.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/pauseButton.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/playButton.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/radioButtonOff.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/radioButtonOn.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/saveButton.png");
-			array.push("https://raw.githubusercontent.com/stzyoonsik/Q4/master/2016.Q4/bin-debug/resources/selectButton.png");
-			
-			_fileCount += array.length;
-			//return array;
+			//내부 저장소\data\data\resources
+			var directory:File = File.applicationDirectory.resolvePath("resources");
+			var array:Array = directory.getDirectoryListing();
+
+			return array;
 		}
 		
 		/**
