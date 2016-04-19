@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas ImagePath="sprite_sheet2.png">
+<SubTexture name="piece5" x="0" y="0" width="202" height="202"/>
+<SubTexture name="2" x="0" y="202" width="189" height="209"/>
+<SubTexture name="3" x="0" y="411" width="187" height="204"/>
+<SubTexture name="pig" x="0" y="615" width="102" height="102"/>
+<SubTexture name="ani" x="0" y="717" width="64" height="106"/>
+<SubTexture name="piece10" x="0" y="823" width="80" height="71"/>
+<SubTexture name="piece8" x="64" y="717" width="80" height="71"/>
+<SubTexture name="piece9" x="102" y="615" width="80" height="71"/>
+<SubTexture name="piece2" x="0" y="894" width="80" height="71"/>
+</TextureAtlas>

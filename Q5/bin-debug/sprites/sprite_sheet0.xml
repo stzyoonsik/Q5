@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TextureAtlas ImagePath="sprite_sheet0.png">
+<SubTexture name="piece22" x="0" y="0" width="540" height="302"/>
+<SubTexture name="5" x="540" y="0" width="204" height="257"/>
+<SubTexture name="n" x="744" y="0" width="212" height="246"/>
+<SubTexture name="piece13" x="744" y="246" width="225" height="225"/>
+<SubTexture name="piece18" x="0" y="302" width="289" height="175"/>
+<SubTexture name="piece19" x="289" y="302" width="290" height="174"/>
+<SubTexture name="piece15" x="579" y="471" width="271" height="186"/>
+<SubTexture name="anipang" x="0" y="477" width="319" height="158"/>
+<SubTexture name="piece14" x="0" y="635" width="300" height="168"/>
+<SubTexture name="sachun" x="0" y="803" width="300" height="168"/>
+<SubTexture name="dance" x="300" y="657" width="300" height="168"/>
+<SubTexture name="yuch" x="600" y="657" width="247" height="204"/>
+<SubTexture name="piece4" x="300" y="825" width="275" height="183"/>
+<SubTexture name="1" x="847" y="657" width="165" height="223"/>
+<SubTexture name="stz" x="575" y="880" width="320" height="91"/>
+<SubTexture name="j" x="579" y="257" width="144" height="190"/>
+<SubTexture name="piece11" x="850" y="471" width="140" height="140"/>
+<SubTexture name="e" x="319" y="476" width="127" height="150"/>
+<SubTexture name="l" x="446" y="476" width="104" height="158"/>
+<SubTexture name="g" x="895" y="880" width="118" height="126"/>
+<SubTexture name="i" x="956" y="0" width="65" height="159"/>
+<SubTexture name="girls" x="0" y="971" width="90" height="51"/>
+<SubTexture name="piece6" x="956" y="159" width="65" height="64"/>
+<SubTexture name="w" x="850" y="611" width="55" height="44"/>
+<SubTexture name="t" x="90" y="971" width="47" height="49"/>
+<SubTexture name="q" x="137" y="971" width="44" height="52"/>
+<SubTexture name="r" x="181" y="971" width="44" height="50"/>
+<SubTexture name="piece28" x="225" y="971" width="45" height="45"/>
+<SubTexture name="y" x="905" y="611" width="43" height="46"/>
+<SubTexture name="u" x="948" y="611" width="43" height="43"/>
+<SubTexture name="piece25" x="540" y="257" width="39" height="39"/>
+<SubTexture name="d" x="969" y="223" width="37" height="41"/>
+<SubTexture name="piece26" x="969" y="264" width="39" height="38"/>
+<SubTexture name="v" x="969" y="302" width="32" height="34"/>
+<SubTexture name="piece29" x="270" y="971" width="27" height="27"/>
+<SubTexture name="piece23" x="270" y="998" width="24" height="22"/>
+<SubTexture name="p" x="575" y="825" width="20" height="25"/>
+<SubTexture name="s" x="575" y="850" width="19" height="26"/>
+<SubTexture name="piece31" x="1006" y="223" width="16" height="15"/>
+<SubTexture name="piece30" x="1006" y="238" width="16" height="15"/>
+<SubTexture name="piece32" x="319" y="626" width="16" height="15"/>
+<SubTexture name="piece33" x="300" y="635" width="16" height="15"/>
+<SubTexture name="piece27" x="956" y="223" width="13" height="13"/>
+<SubTexture name="piece24" x="956" y="236" width="8" height="8"/>
+</TextureAtlas>
