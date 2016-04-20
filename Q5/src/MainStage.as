@@ -1,5 +1,6 @@
 package
 {	
+	import com.adobe.nativeExtensions.Vibration;
 	import com.yoonsik.YoonsikExtension;
 	
 	import flash.desktop.NativeApplication;
@@ -25,7 +26,8 @@ package
 	
 	public class MainStage extends Sprite
 	{
-		private var t:YoonsikExtension = new YoonsikExtension();
+		private var _YSExt:YoonsikExtension = new YoonsikExtension();
+		private var _vibeExt:Vibration = new Vibration(); 
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 		private var _animationMode:AnimationMode;
@@ -67,7 +69,8 @@ package
 				case Keyboard.BACK:
 					trace("back");
 					event.preventDefault();
-					t.alert("a");
+					_YSExt.alert("a");
+					
 					break;
 			}
 		}
@@ -416,7 +419,8 @@ package
 //						trace("축소");
 //					}
 					
-					t.toast(_imageMode.currentImageTextField.text);
+					_YSExt.toast(_imageMode.currentImageTextField.text);
+					_vibeExt.vibrate(250);
 					
 					FunctionMgr.makeVisibleFalse(_imageMode.spriteListVector);
 					
@@ -429,6 +433,7 @@ package
 		private function onClickPlayButton():void
 		{
 			trace("재생");
+			_vibeExt.vibrate(250);
 			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 			
 			_animationMode.timer.addEventListener(TimerEvent.TIMER, onTimerStart);
@@ -440,6 +445,7 @@ package
 		//일시정지버튼 클릭 (dispatch된 콜백메소드)
 		private function onClickPauseButton():void
 		{
+			_vibeExt.vibrate(250);
 			_animationMode.timer.stop();
 			_animationMode.timer.removeEventListener(TimerEvent.TIMER, onTimerStart);
 			_animationMode.timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerStop);
@@ -448,6 +454,7 @@ package
 		//삭제버튼 클릭 (dispatch된 콜백메소드) - 타이머가 일시정지(정지)된 상태에서만 삭제 가능
 		private function onClickDeleteButton():void
 		{
+			_vibeExt.vibrate(250);
 			//일시정지중이면
 			if(!_animationMode.timer.running)
 			{
