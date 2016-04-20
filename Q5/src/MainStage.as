@@ -477,17 +477,17 @@ package
 			trace("타이머 시작");
 			
 			_animationMode.pieceImage.texture = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].texture;
-			_animationMode.pieceImage.width = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].width;
-			_animationMode.pieceImage.height = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].height;
+			_animationMode.pieceImage.width = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].width * _screenWidth / 1000;
+			_animationMode.pieceImage.height = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].height * _screenHeight / 1000;
 			_animationMode.nameTextField.text = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].name; 
 			
-			if(_animationMode.pieceImage.width > 400 || _animationMode.pieceImage.height > 400)
-			{
-				_animationMode.pieceImage.width /= 2;
-				_animationMode.pieceImage.height /= 2;
-				_animationMode.nameTextField.text += " (2배 축소)";
-				trace("축소");
-			}
+//			if(_animationMode.pieceImage.width > _screenWidth / 10 * 2.5 || _animationMode.pieceImage.height > _screenHeight / 10 * 2.5)
+//			{
+//				_animationMode.pieceImage.width /= 2;
+//				_animationMode.pieceImage.height /= 2;
+//				_animationMode.nameTextField.text += " (2배 축소)";
+//				trace("축소");
+//			}
 			
 			
 			_animationMode.indexTextField.text = (_animationMode.currentIndex + 1).toString() + " / " + (_spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length ); 

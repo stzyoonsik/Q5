@@ -26,8 +26,8 @@ package
 		private var _delay:uint = 100;
 		private var _timer:Timer;
 		
-		private var _nameTextField:TextField = new TextField(200,24,"");						//현재 재생중인 애니메이션의 이미지의 이름을 알려주는 텍스트필드
-		private var _indexTextField:TextField = new TextField(200, 24, "");
+		private var _nameTextField:TextField;												//현재 재생중인 애니메이션의 이미지의 이름을 알려주는 텍스트필드
+		private var _indexTextField:TextField;
 		
 		private var _stageWidth:int;
 		private var _stageHeight:int;
@@ -159,18 +159,24 @@ package
 			
 			_pieceImage.texture = null;
 			_pieceImage.width = 0;
-			_pieceImage.height = 0;
+			_pieceImage.height = 0;			
+			_pieceImage.x = _stageWidth / 10 * 7.5;
+			_pieceImage.y = _stageHeight / 10 * 3;	
 			_pieceImage.alignPivot("center", "center");
-			_pieceImage.x = 600;
-			_pieceImage.y = 250;			
 			addChild(_pieceImage);
 			
-			_nameTextField.x = 500;
-			_nameTextField.y = 400;
+			_nameTextField = new TextField(_stageWidth / 10, _stageHeight / 10, "");
+			_nameTextField.format.size = 40;
+			_nameTextField.x = _stageWidth / 10 * 7.5;
+			_nameTextField.y = _stageHeight / 10 * 5;
+			_nameTextField.alignPivot("center", "center");
 			addChild(_nameTextField);
 			
-			_indexTextField.x = 500;
-			_indexTextField.y = 75;
+			_indexTextField = new TextField(_stageWidth / 10, _stageHeight / 10, "");
+			_indexTextField.format.size = 40;
+			_indexTextField.x = _stageWidth / 10 * 7.5;
+			_indexTextField.y = _stageHeight / 10 * 1;
+			_indexTextField.alignPivot("center", "center");
 			addChild(_indexTextField);
 		}
 		
@@ -179,7 +185,6 @@ package
 			_playButton.addEventListener(TouchEvent.TOUCH, onPlayButton);
 			_pauseButton.addEventListener(TouchEvent.TOUCH, onPauseButton);
 			_deleteButton.addEventListener(TouchEvent.TOUCH, onDeleteButton);
-			
 		}
 		
 		/**

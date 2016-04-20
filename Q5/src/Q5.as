@@ -22,8 +22,10 @@ package
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			//stage.displayState = StageDisplayState.FULL_SCREEN;
+			//stage.stageWidth = Screen.mainScreen.bounds.width;
+			//stage.stageHeight = Screen.mainScreen.bounds.height;
 			
-			
+			trace(Screen.mainScreen.bounds);
 			//trace(stage.fullScreenWidth + " " + stage.fullScreenHeight);
 			
 			var starling:Starling;

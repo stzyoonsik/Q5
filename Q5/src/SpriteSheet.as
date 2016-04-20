@@ -24,7 +24,7 @@ package
 	public class SpriteSheet extends Sprite
 	{
 		private var _loadSpriteSheetsButton:Sprite = new Sprite();							//애니메이션모드, 이미지모드에서 공유됨. 스프라이트시트를 로드하는 버튼
-		private var _selectSpriteSheetButton:Image;											//화살표버튼
+		private var _selectSpriteSheetButton:Sprite = new Sprite();											//화살표버튼
 		
 		private var _spriteSheetList:Sprite = new Sprite();									//스프라이트시트 텍스트필드 를 담는 Sprite		
 		private var _spriteSheetVector:Vector.<TextField> = new Vector.<TextField>;			//스프라이트시트 텍스트필드를 담는 배열
@@ -46,7 +46,7 @@ package
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 	
-		private var _currentTextField:TextField = new TextField(240, 24, "");				//현재 선택된 스프라이트 시트를 나타내기 위한 텍스트필드
+		private var _currentTextField:TextField;											//현재 선택된 스프라이트 시트를 나타내기 위한 텍스트필드
 		
 		public function SpriteSheet(stageWidth:int, stageHeight:int)
 		{		
@@ -140,18 +140,25 @@ package
 						break;
 					
 					case "selectButton":
-						_selectSpriteSheetButton = new Image(guiArray[i].texture);
-						_selectSpriteSheetButton.pivotX = _selectSpriteSheetButton.width / 2;
-						_selectSpriteSheetButton.pivotY = _selectSpriteSheetButton.height / 2;
-						_selectSpriteSheetButton.x = 300;
-						_selectSpriteSheetButton.y = 612;
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10 / 3;
+						image.height = image.width;
+						_selectSpriteSheetButton.addChild(image);
+						
+						_selectSpriteSheetButton.x = _stageWidth / 10 * 3.5;
+						_selectSpriteSheetButton.y = _stageHeight / 10 * 7.5;
+						_selectSpriteSheetButton.alignPivot("center", "center");
 						_selectSpriteSheetButton.visible = false;
 						addChild(_selectSpriteSheetButton);						
 						break;
 				}
 			}
-			_currentTextField.x = 50;
-			_currentTextField.y = 600;
+			
+			_currentTextField = new TextField(_stageWidth / 10 * 2.5, _stageHeight / 10 / 2, "");
+			_currentTextField.format.size = 30;
+			_currentTextField.x = _stageWidth / 10 * 2;
+			_currentTextField.y = _stageHeight / 10 * 7.5;
+			_currentTextField.alignPivot("center", "center");
 			_currentTextField.border = true;
 			
 			addChild(_currentTextField);
@@ -341,14 +348,15 @@ package
 			_spriteSheetDic[name] = imageData;
 			
 			//보여주기용 스프라이트시트 세팅
-			image.scale = 0.25;
-			var scaledSpriteSheet:Image = image;
+			//image.scale = 0.25;
+			var scaledSpriteSheet:Sprite = new Sprite;
+			image.width = _stageWidth / 10 * 3;
+			image.height = _stageHeight / 10 * 3;
+			scaledSpriteSheet.addChild(image);
 			
-			scaledSpriteSheet.pivotX = scaledSpriteSheet.width / 2;
-			scaledSpriteSheet.pivotY = scaledSpriteSheet.height / 2;
-			
-			scaledSpriteSheet.x = 150;
-			scaledSpriteSheet.y = 150;
+			scaledSpriteSheet.x = _stageWidth / 10 * 2.5;
+			scaledSpriteSheet.y = _stageHeight / 10 * 3;
+			scaledSpriteSheet.alignPivot("center", "center");
 			scaledSpriteSheet.visible = false;
 			
 			//딕셔너리에 추가
@@ -378,7 +386,7 @@ package
 		private function setSpriteSheetTextField(name:String):void
 		{
 			var _spriteSheetTextField:TextField;
-			_spriteSheetTextField = new TextField(240,24, "");
+			_spriteSheetTextField = new TextField(_stageWidth / 10 * 2.5, _stageHeight / 10 / 2, "");
 			
 			_spriteSheetTextField.text = name;
 			_spriteSheetTextField.name = name;
@@ -390,8 +398,10 @@ package
 			{
 				for(var i:int = 0; i < _spriteSheetVector.length; ++i)
 				{					
-					_spriteSheetVector[i].x = 50;
-					_spriteSheetVector[i].y = 624 + (i * 24);
+					_spriteSheetVector[i].format.size = 30;
+					_spriteSheetVector[i].x = _stageWidth / 10 * 2;
+					_spriteSheetVector[i].y = (_stageHeight / 10 * 7.5) + (_stageHeight / 10 / 2) + (i * _stageHeight / 10 / 2);//624 + (i * 24);
+					_spriteSheetVector[i].alignPivot("center", "center");
 					_spriteSheetList.visible = false;
 					_spriteSheetList.addChild(_spriteSheetVector[i]);
 					if(i == _spriteSheetVector.length - 1)
