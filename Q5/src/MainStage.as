@@ -30,8 +30,8 @@ package
 	public class MainStage extends Sprite
 	{
 		//private var t:ToastExtension = new ToastExtension();
-		private var _screenWidth:int;
-		private var _screenHeight:int;
+		private var _stageWidth:int;
+		private var _stageHeight:int;
 		private var _animationMode:AnimationMode;
 		private var _imageMode:ImageMode; 
 		private var _spriteSheet:SpriteSheet;
@@ -58,8 +58,8 @@ package
 		public function MainStage()
 		{
 			
-			_screenWidth = Screen.mainScreen.bounds.width;
-			_screenHeight = Screen.mainScreen.bounds.height;
+			_stageWidth = Screen.mainScreen.bounds.width;
+			_stageHeight = Screen.mainScreen.bounds.height;
 			_loadResource = new GUILoader(onLoadingComplete);
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onBack);
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
@@ -122,20 +122,20 @@ package
 				init();
 				
 				trace(this.width + " " + this.height);
-				_spriteSheet = new SpriteSheet(_screenWidth, _screenHeight);
+				_spriteSheet = new SpriteSheet(_stageWidth, _stageHeight);
 				_spriteSheet.init(_guiArray);
 				_spriteSheet.addEventListener("selected", onSelectSpriteSheet);
 				_spriteSheet.addEventListener("loaded", onSelectSpriteSheet);
 				addChild(_spriteSheet);
 				
-				_animationMode = new AnimationMode(_screenWidth, _screenHeight);
+				_animationMode = new AnimationMode(_stageWidth, _stageHeight);
 				_animationMode.init(_guiArray);	
 				_animationMode.addEventListener("Play", onClickPlayButton);
 				_animationMode.addEventListener("Pause", onClickPauseButton);
 				_animationMode.addEventListener("Delete", onClickDeleteButton);				
 				addChild(_animationMode);
 				
-				_imageMode = new ImageMode(_screenWidth, _screenHeight);
+				_imageMode = new ImageMode(_stageWidth, _stageHeight);
 				_imageMode.init(_guiArray);
 				_imageMode.addEventListener("save", onClickSaveButton);
 				_imageMode.visible = false;
@@ -179,18 +179,18 @@ package
 				{
 					case "radioButtonOff":
 						_animationModeOffButton = new Image(_guiArray[i].texture);
-						_animationModeOffButton.x = _screenWidth / 10 * 4.5;
-						_animationModeOffButton.y = _screenHeight / 10 * 6;						
-						_animationModeOffButton.width = _screenWidth / 10 / 2;
+						_animationModeOffButton.x = _stageWidth / 10 * 4.5;
+						_animationModeOffButton.y = _stageHeight / 10 * 6;						
+						_animationModeOffButton.width = _stageWidth / 10 / 2;
 						_animationModeOffButton.height = _animationModeOffButton.width;
 						_animationModeOffButton.alignPivot("center", "center");
 						_animationModeOffButton.visible = false;
 						addChild(_animationModeOffButton);
 						
 						_imageModeOffButton = new Image(_guiArray[i].texture);
-						_imageModeOffButton.x = _screenWidth / 10 * 4.5;
-						_imageModeOffButton.y = _screenHeight / 10 * 8;
-						_imageModeOffButton.width = _screenWidth / 10 / 2;
+						_imageModeOffButton.x = _stageWidth / 10 * 4.5;
+						_imageModeOffButton.y = _stageHeight / 10 * 8;
+						_imageModeOffButton.width = _stageWidth / 10 / 2;
 						_imageModeOffButton.height = _imageModeOffButton.width;
 						_imageModeOffButton.alignPivot("center", "center");
 						_imageModeOffButton.visible = true;
@@ -198,18 +198,18 @@ package
 						break;
 					case "radioButtonOn":
 						_animationModeOnButton = new Image(_guiArray[i].texture);
-						_animationModeOnButton.x = _screenWidth / 10 * 4.5;
-						_animationModeOnButton.y = _screenHeight / 10 * 6;
-						_animationModeOnButton.width = _screenWidth / 10 / 2;
+						_animationModeOnButton.x = _stageWidth / 10 * 4.5;
+						_animationModeOnButton.y = _stageHeight / 10 * 6;
+						_animationModeOnButton.width = _stageWidth / 10 / 2;
 						_animationModeOnButton.height = _animationModeOnButton.width;
 						_animationModeOnButton.alignPivot("center", "center");
 						_animationModeOnButton.visible = true;
 						addChild(_animationModeOnButton);
 						
 						_imageModeOnButton = new Image(_guiArray[i].texture);
-						_imageModeOnButton.x = _screenWidth / 10 * 4.5;
-						_imageModeOnButton.y = _screenHeight / 10 * 8;
-						_imageModeOnButton.width = _screenWidth / 10 / 2;
+						_imageModeOnButton.x = _stageWidth / 10 * 4.5;
+						_imageModeOnButton.y = _stageHeight / 10 * 8;
+						_imageModeOnButton.width = _stageWidth / 10 / 2;
 						_imageModeOnButton.height = _imageModeOnButton.width;
 						_imageModeOnButton.alignPivot("center", "center");
 						_imageModeOnButton.visible = false;
@@ -217,10 +217,10 @@ package
 						break;
 					case "content":
 						_content = new Image(_guiArray[i].texture);								
-						_content.x = _screenWidth / 10 / 2;
-						_content.y = _screenHeight / 10 / 2;
-						_content.width = _screenWidth / 10 * 9;
-						_content.height = _screenHeight / 10 * 5;
+						_content.x = _stageWidth / 10 / 2;
+						_content.y = _stageHeight / 10 / 2;
+						_content.width = _stageWidth / 10 * 9;
+						_content.height = _stageHeight / 10 * 5;
 						addChild(_content);
 						
 						break;
@@ -228,18 +228,18 @@ package
 				}
 			}
 			
-			_animationModeText = new TextField(_screenWidth / 10, _screenHeight / 10, "Animation Mode");
+			_animationModeText = new TextField(_stageWidth / 10, _stageHeight / 10, "Animation Mode");
 			_animationModeText.format.size = 40;			
-			_animationModeText.x = _screenWidth / 10 * 4.5;
-			_animationModeText.y = _screenHeight / 10 * 6.75;			
+			_animationModeText.x = _stageWidth / 10 * 4.5;
+			_animationModeText.y = _stageHeight / 10 * 6.75;			
 			_animationModeText.alignPivot("center", "center");
 			//_animationModeText.border = true;
 			addChild(_animationModeText);
 			
-			_imageModeText = new TextField(_screenWidth / 10, _screenHeight / 10, "Image Mode");
+			_imageModeText = new TextField(_stageWidth / 10, _stageHeight / 10, "Image Mode");
 			_imageModeText.format.size = 40;
-			_imageModeText.x = _screenWidth / 10 * 4.5;
-			_imageModeText.y = _screenHeight / 10 * 8.75;
+			_imageModeText.x = _stageWidth / 10 * 4.5;
+			_imageModeText.y = _stageHeight / 10 * 8.75;
 			_imageModeText.alignPivot("center", "center");
 			//_imageModeText.border = true;
 			addChild(_imageModeText);
@@ -344,15 +344,17 @@ package
 			
 			_imageMode.spriteListVector = new Vector.<Sprite>;
 			_imageMode.listSpr = new Sprite();
-			_imageMode.listSpr.x = 600;
-			_imageMode.listSpr.y = 524;
+			_imageMode.listSpr.x = _stageWidth / 10 * 6.5;
+			_imageMode.listSpr.y = _stageHeight / 10 * 6.5;
 			_imageMode.listSpr.visible = false;
 			
 			for(var key:String in pieceDic)
 			{
 				count++;
 				
-				var textField:TextField = new TextField(200,24, pieceDic[key].name); 
+				var textField:TextField = new TextField(_stageWidth / 10 * 2, _stageHeight / 10 / 2, pieceDic[key].name);
+				textField.format.size = 30;
+				textField.alignPivot("center", "center");
 				textField.y = setY;
 				
 				textField.border = true;
@@ -364,7 +366,7 @@ package
 				
 				if(count % 5 != 0)
 				{
-					setY += 24;
+					setY += _stageHeight / 10 / 2;
 				}
 				else
 				{
@@ -374,8 +376,8 @@ package
 					_imageMode.listSpr.visible = false;
 					_imageMode.addChild(_imageMode.listSpr);
 					_imageMode.listSpr = new Sprite();
-					_imageMode.listSpr.x = 600;
-					_imageMode.listSpr.y = 524;
+					_imageMode.listSpr.x = _stageWidth / 10 * 6.5;
+					_imageMode.listSpr.y = _stageHeight / 10 * 6.5;
 					
 					setY = 0;					
 				}
@@ -412,17 +414,17 @@ package
 					
 					trace(touch.target.name);
 					_imageMode.pieceImage.texture = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].image.texture;
-					_imageMode.pieceImage.width = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.width;
-					_imageMode.pieceImage.height = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.height;
+					_imageMode.pieceImage.width = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.width * _stageWidth / 1000;
+					_imageMode.pieceImage.height = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.height * _stageHeight / 1000;
 					_imageMode.currentImageTextField.text =  _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].name;
 					
-					if(_imageMode.pieceImage.width > 400 || _imageMode.pieceImage.height > 400)
-					{
-						_imageMode.pieceImage.width /= 2;
-						_imageMode.pieceImage.height /= 2;
-						_imageMode.currentImageTextField.text += " (2배 축소)";
-						trace("축소");
-					}
+//					if(_imageMode.pieceImage.width > 400 || _imageMode.pieceImage.height > 400)
+//					{
+//						_imageMode.pieceImage.width /= 2;
+//						_imageMode.pieceImage.height /= 2;
+//						_imageMode.currentImageTextField.text += " (2배 축소)";
+//						trace("축소");
+//					}
 					
 					//t.toast(_imageMode.currentImageTextField.text);
 					
@@ -477,8 +479,8 @@ package
 			trace("타이머 시작");
 			
 			_animationMode.pieceImage.texture = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].texture;
-			_animationMode.pieceImage.width = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].width * _screenWidth / 1000;
-			_animationMode.pieceImage.height = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].height * _screenHeight / 1000;
+			_animationMode.pieceImage.width = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].width * _stageWidth / 1000;
+			_animationMode.pieceImage.height = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].height * _stageHeight / 1000;
 			_animationMode.nameTextField.text = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].name; 
 			
 //			if(_animationMode.pieceImage.width > _screenWidth / 10 * 2.5 || _animationMode.pieceImage.height > _screenHeight / 10 * 2.5)

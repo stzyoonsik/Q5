@@ -11,7 +11,7 @@ package
 	
 	public class ImageMode extends Sprite
 	{
-		private var _saveButton:Image;
+		private var _saveButton:Sprite = new Sprite();
 		private var _arrowUp:Image;
 		private var _arrowDown:Image;
 		private var _currentPage:int;
@@ -19,7 +19,7 @@ package
 		private var _spriteListVector:Vector.<Sprite>;										//스프라이트시트 텍스트필드를 담는 배열									
 		private var _listSpr:Sprite = new Sprite();											//우측 하단 상하화살표버튼을 누르면 열리는 리스트
 		private var _selectSpriteSheetButton:Image;											//상하화살표버튼
-		private var _currentImageTextField:TextField = new TextField(200, 24, "");				//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
+		private var _currentImageTextField:TextField;										//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
 		
 		private var _stageWidth:int;
 		private var _stageHeight:int;
@@ -32,12 +32,12 @@ package
 			
 		}
 		
-		public function get saveButton():Image
+		public function get saveButton():Sprite
 		{
 			return _saveButton;
 		}
 
-		public function set saveButton(value:Image):void
+		public function set saveButton(value:Sprite):void
 		{
 			_saveButton = value;
 		}
@@ -104,62 +104,73 @@ package
 		
 		public function init(guiArray:Vector.<Image>):void
 		{
-			//trace("init");
+			var image:Image;
 			for(var i:int = 0; i<guiArray.length; ++i)
 			{
 				switch(guiArray[i].name)
 				{
 					case "selectButton":
 						_selectSpriteSheetButton = new Image(guiArray[i].texture);
-						_selectSpriteSheetButton.x = 800;
-						_selectSpriteSheetButton.y = 500;
+						_selectSpriteSheetButton.x = _stageWidth / 10 * 8;
+						_selectSpriteSheetButton.y = _stageHeight / 10 * 6.5;
+						_selectSpriteSheetButton.width = _stageWidth / 10 / 3;
+						_selectSpriteSheetButton.height = _selectSpriteSheetButton.width;
+						_selectSpriteSheetButton.alignPivot("center", "center");
 						_selectSpriteSheetButton.visible = false;
 						addChild(_selectSpriteSheetButton);						
 						break;
 					
 					case "arrowUp":
 						_arrowUp = new Image(guiArray[i].texture);
-						_arrowUp.x = 800;
-						_arrowUp.y = 548;
+						_arrowUp.x = _stageWidth / 10 * 8;
+						_arrowUp.y = _stageHeight / 10 * 7.5;
+						_arrowUp.width = _stageWidth / 10 / 3;
+						_arrowUp.height = _arrowUp.width;
+						_arrowUp.alignPivot("center", "center");
 						_arrowUp.visible = false;
 						addChild(_arrowUp);
 						break;
 					
 					case "arrowDown":
 						_arrowDown = new Image(guiArray[i].texture);
-						_arrowDown.x = 800;
-						_arrowDown.y = 600;
+						_arrowDown.x = _stageWidth / 10 * 8;
+						_arrowDown.y = _stageHeight / 10 * 8.5;
+						_arrowDown.width = _stageWidth / 10 / 3;
+						_arrowDown.height = _arrowDown.width;
+						_arrowDown.alignPivot("center", "center");
 						_arrowDown.visible = false;
 						addChild(_arrowDown);
 						break;
 					case "saveButton":
-						_saveButton = new Image(guiArray[i].texture);
-						_saveButton.pivotX = _saveButton.width / 2;
-						_saveButton.pivotY = _saveButton.height / 2;
-						_saveButton.x = 850;
-						_saveButton.y = 500;
-						_saveButton.visible = false;
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10;
+						image.height = image.width;
+						_saveButton.addChild(image);
+						
+						_saveButton.x = _stageWidth / 10 * 9;
+						_saveButton.y = _stageHeight / 10 * 7;						
+						_saveButton.alignPivot("center", "center");
+						_saveButton.visible = true;
 						addChild(_saveButton);
 						break;
 				}
 			}
-			_currentImageTextField.x = 600;
-			_currentImageTextField.y = 500;
-			
+			_currentImageTextField = new TextField(_stageWidth / 10, _stageHeight / 10, "");
+			_currentImageTextField.format.bold = true;
+			_currentImageTextField.format.size = 30;
+			_currentImageTextField.x = _stageWidth / 10 * 6.5;
+			_currentImageTextField.y = _stageHeight / 10 * 6;
+			_currentImageTextField.alignPivot("center", "center");
+			addChild(_currentImageTextField);
 			
 			_pieceImage.texture = null;
 			_pieceImage.width = 0;
 			_pieceImage.height = 0;
 			_pieceImage.alignPivot("center", "center");
-			_pieceImage.x = 600;
-			_pieceImage.y = 250;
+			_pieceImage.x = _stageWidth / 10 * 7.5;
+			_pieceImage.y = _stageHeight / 10 * 3;	
 			
 			addChild(_pieceImage);
-			
-			
-			addChild(_currentImageTextField);
-			
-			
 			addChild(_listSpr);
 		}
 		
@@ -255,14 +266,11 @@ package
 				
 				_saveButton.scale = 0.8;
 			}
-			else
-			{
-				_saveButton.scale = 1;
-			}
 			
 			touch = event.getTouch(_saveButton, TouchPhase.ENDED);
 			if(touch)
 			{
+				_saveButton.scale = 1;
 				dispatchEvent(new Event("save"));
 			}
 		}

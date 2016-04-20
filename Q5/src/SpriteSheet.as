@@ -156,6 +156,7 @@ package
 			
 			_currentTextField = new TextField(_stageWidth / 10 * 2.5, _stageHeight / 10 / 2, "");
 			_currentTextField.format.size = 30;
+			_currentTextField.format.bold = true;
 			_currentTextField.x = _stageWidth / 10 * 2;
 			_currentTextField.y = _stageHeight / 10 * 7.5;
 			_currentTextField.alignPivot("center", "center");
@@ -350,8 +351,8 @@ package
 			//보여주기용 스프라이트시트 세팅
 			//image.scale = 0.25;
 			var scaledSpriteSheet:Sprite = new Sprite;
-			image.width = _stageWidth / 10 * 3;
-			image.height = _stageHeight / 10 * 3;
+			image.width *= _stageWidth / 2500;
+			image.height *= _stageHeight / 2500;
 			scaledSpriteSheet.addChild(image);
 			
 			scaledSpriteSheet.x = _stageWidth / 10 * 2.5;
