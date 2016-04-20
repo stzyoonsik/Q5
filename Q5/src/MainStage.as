@@ -9,17 +9,14 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
-	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	
-	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.events.ResizeEvent;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
@@ -29,7 +26,6 @@ package
 	public class MainStage extends Sprite
 	{
 		private var t:YoonsikExtension = new YoonsikExtension();
-		
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 		private var _animationMode:AnimationMode;
@@ -38,10 +34,6 @@ package
 		private var _loadResource:GUILoader;
 		
 		private var _guiArray:Vector.<Image> = new Vector.<Image>;									//gui 리소스가 담긴 배열
-		
-		
-		
-		private var _content:Image;
 		
 		private var _animationModeOnButton:Image;
 		private var _animationModeOffButton:Image;
@@ -53,8 +45,6 @@ package
 		
 		private var _spriteVector:Vector.<TextField> = new Vector.<TextField>;
 		
-		
-		
 		public function MainStage()
 		{
 			
@@ -63,14 +53,13 @@ package
 			_loadResource = new GUILoader(onLoadingComplete);
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onBack);
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
-			
-			//stage.stageWidth = _screenWidth;
-			//stage.stageHeight = _screenHeight;
-			
-			
-			
 		}
 	
+		/**
+		 * 
+		 * @param event 디바이스의 뒤로가기 버튼
+		 * 뒤로가기를 누르면 종료 alert를 띄우고, 예를 누르면 종료, 아니오를 누르면 취소
+		 */
 		private function onBack(event:KeyboardEvent):void
 		{
 			switch(event.keyCode)
@@ -78,6 +67,7 @@ package
 				case Keyboard.BACK:
 					trace("back");
 					event.preventDefault();
+					t.alert("a");
 					break;
 			}
 		}
@@ -215,15 +205,15 @@ package
 						_imageModeOnButton.visible = false;
 						addChild(_imageModeOnButton);
 						break;
-					case "content":
-						_content = new Image(_guiArray[i].texture);								
-						_content.x = _stageWidth / 10 / 2;
-						_content.y = _stageHeight / 10 / 2;
-						_content.width = _stageWidth / 10 * 9;
-						_content.height = _stageHeight / 10 * 5;
-						addChild(_content);
-						
-						break;
+//					case "content":
+//						_content = new Image(_guiArray[i].texture);								
+//						_content.x = _stageWidth / 10 / 2;
+//						_content.y = _stageHeight / 10 / 2;
+//						_content.width = _stageWidth / 10 * 9;
+//						_content.height = _stageHeight / 10 * 5;
+//						addChild(_content);
+//						
+//						break;
 					
 				}
 			}
