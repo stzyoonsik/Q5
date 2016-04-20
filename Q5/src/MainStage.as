@@ -384,8 +384,9 @@ package
 				}
 			}
 			
-			//_imageMode.spriteListVector.sort(FunctionMgr.compareName);
 			
+			//_imageMode.spriteListVector.sort(FunctionMgr.compareName);
+			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 		}
 		
 	
@@ -433,9 +434,21 @@ package
 		private function onClickPlayButton():void
 		{
 			trace("재생");
-			_vibeExt.vibrate(250);
-			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 			
+			_vibeExt.vibrate(250);
+			if(_spriteSheet.currentTextField.text == "")
+			{
+				trace("스프라이트시트를 먼저 추가해야합니다.");
+				_YSExt.toast("스프라이트시트를 먼저 추가해야합니다.");
+				return;	
+			}
+			if(_animationMode.timer.running)
+			{
+				_YSExt.toast("이미 재생중입니다.");
+				return;
+			}
+			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
+						
 			_animationMode.timer.addEventListener(TimerEvent.TIMER, onTimerStart);
 			_animationMode.timer.addEventListener(TimerEvent.TIMER_COMPLETE, onTimerStop)
 				
@@ -445,6 +458,12 @@ package
 		//일시정지버튼 클릭 (dispatch된 콜백메소드)
 		private function onClickPauseButton():void
 		{
+			if(_spriteSheet.currentTextField.text == "")
+			{
+				trace("스프라이트시트를 먼저 추가해야합니다.");
+				_YSExt.toast("스프라이트시트를 먼저 추가해야합니다.");
+				return;	
+			}
 			_vibeExt.vibrate(250);
 			_animationMode.timer.stop();
 			_animationMode.timer.removeEventListener(TimerEvent.TIMER, onTimerStart);
@@ -455,6 +474,13 @@ package
 		private function onClickDeleteButton():void
 		{
 			_vibeExt.vibrate(250);
+			
+			if(_spriteSheet.currentTextField.text == "")
+			{
+				trace("스프라이트시트를 먼저 추가해야합니다.");
+				_YSExt.toast("스프라이트시트를 먼저 추가해야합니다.");
+				return;	
+			}
 			//일시정지중이면
 			if(!_animationMode.timer.running)
 			{
@@ -514,15 +540,15 @@ package
 		 */
 		private function onClickSaveButton():void
 		{
-			var _pngFile:File = File.documentsDirectory.resolvePath("images/" + _imageMode.currentImageTextField.text + ".png");
+			var pngFile:File = File.documentsDirectory.resolvePath("images/" + _imageMode.currentImageTextField.text + ".png");
 			
 		
 			var byteArray:ByteArray = PNGEncoder.encode(_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][_imageMode.currentImageTextField.text].bitmapData);
 			
-			var _fileStream:FileStream = new FileStream();
-			_fileStream.open(_pngFile, FileMode.WRITE);
-			_fileStream.writeBytes(byteArray);
-			_fileStream.close();
+			var fileStream:FileStream = new FileStream();
+			fileStream.open(pngFile, FileMode.WRITE);
+			fileStream.writeBytes(byteArray);
+			fileStream.close();
 		}
 	}
 }
