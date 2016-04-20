@@ -21,9 +21,13 @@ package
 		private var _selectSpriteSheetButton:Image;											//상하화살표버튼
 		private var _currentImageTextField:TextField = new TextField(200, 24, "");				//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
 		
+		private var _stageWidth:int;
+		private var _stageHeight:int;
 		
-		public function ImageMode()
+		public function ImageMode(stageWidth:int, stageHeight:int)
 		{
+			_stageWidth = stageWidth;
+			_stageHeight = stageHeight;
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 			
 		}

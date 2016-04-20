@@ -1,17 +1,26 @@
 package
 {	
 	
+	//import com.lpesign.ToastExtension;
+	
+	import flash.desktop.NativeApplication;
+	import flash.display.Screen;
+	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.geom.Rectangle;
+	import flash.ui.Keyboard;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.ResizeEvent;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
@@ -20,9 +29,12 @@ package
 	
 	public class MainStage extends Sprite
 	{
-		private var _animationMode:AnimationMode = new AnimationMode();
-		private var _imageMode:ImageMode = new ImageMode();
-		private var _spriteSheet:SpriteSheet = new SpriteSheet();
+		//private var t:ToastExtension = new ToastExtension();
+		private var _screenWidth:int;
+		private var _screenHeight:int;
+		private var _animationMode:AnimationMode;
+		private var _imageMode:ImageMode; 
+		private var _spriteSheet:SpriteSheet;
 		private var _loadResource:GUILoader;
 		
 		private var _guiArray:Vector.<Image> = new Vector.<Image>;									//gui 리소스가 담긴 배열
@@ -41,18 +53,30 @@ package
 		
 		private var _spriteVector:Vector.<TextField> = new Vector.<TextField>;
 		
-		//private var _
 		
 		
 		public function MainStage()
 		{
+			trace(Screen.mainScreen.bounds);
+			_screenWidth = Screen.mainScreen.bounds.width;
+			_screenHeight = Screen.mainScreen.bounds.height;
 			_loadResource = new GUILoader(onLoadingComplete);
+			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onBack);
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 			
 		}
-		
-		
-		
+	
+		private function onBack(event:KeyboardEvent):void
+		{
+			switch(event.keyCode)
+			{
+				case Keyboard.BACK:
+					trace("back");
+					event.preventDefault();
+					break;
+			}
+		}
+
 		/**
 		 * 모든 터치 이벤트를 관장하는 이벤트 리스너 
 		 * @param event
@@ -92,19 +116,21 @@ package
 				moveToImage(_loadResource.imageDataArray);
 				init();
 				
+				trace(this.width + " " + this.height);
+				_spriteSheet = new SpriteSheet(_screenWidth, _screenHeight);
 				_spriteSheet.init(_guiArray);
 				_spriteSheet.addEventListener("selected", onSelectSpriteSheet);
 				_spriteSheet.addEventListener("loaded", onSelectSpriteSheet);
 				addChild(_spriteSheet);
 				
-				
+				_animationMode = new AnimationMode(_screenWidth, _screenHeight);
 				_animationMode.init(_guiArray);	
 				_animationMode.addEventListener("Play", onClickPlayButton);
 				_animationMode.addEventListener("Pause", onClickPauseButton);
-				_animationMode.addEventListener("Delete", onClickDeleteButton);
-				
+				_animationMode.addEventListener("Delete", onClickDeleteButton);				
 				addChild(_animationMode);
 				
+				_imageMode = new ImageMode(_screenWidth, _screenHeight);
 				_imageMode.init(_guiArray);
 				_imageMode.addEventListener("save", onClickSaveButton);
 				_imageMode.visible = false;
@@ -174,6 +200,9 @@ package
 						break;
 					case "content":
 						_content = new Image(_guiArray[i].texture);
+						
+						//_content.width = stage.stageWidth / 10 * 9;
+						//_content.height = stage.stageHeight / 10 * 4;						
 						_content.pivotX = _content.width / 2;
 						_content.pivotY = _content.height / 2;
 						_content.x = 450;
@@ -377,6 +406,8 @@ package
 						trace("축소");
 					}
 					
+					//t.toast(_imageMode.currentImageTextField.text);
+					
 					FunctionMgr.makeVisibleFalse(_imageMode.spriteListVector);
 					
 					_imageMode.makeArrowVisibleFalse();
@@ -466,7 +497,9 @@ package
 		 */
 		private function onClickSaveButton():void
 		{
-			var _pngFile:File = File.documentsDirectory.resolvePath(_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][_imageMode.currentImageTextField.text].name + ".png");
+			var _pngFile:File = File.documentsDirectory.resolvePath("images/" + _imageMode.currentImageTextField.text + ".png");
+			
+		
 			var byteArray:ByteArray = PNGEncoder.encode(_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][_imageMode.currentImageTextField.text].bitmapData);
 			
 			var _fileStream:FileStream = new FileStream();

@@ -42,12 +42,27 @@ package
 		
 		private var _numberOfPNG:int;
 		private var _numberOfXML:int;
+		
+		private var _stageWidth:int;
+		private var _stageHeight:int;
 	
 		private var _currentTextField:TextField = new TextField(240, 24, "");				//현재 선택된 스프라이트 시트를 나타내기 위한 텍스트필드
 		
-		public function SpriteSheet()
+		public function SpriteSheet(stageWidth:int, stageHeight:int)
 		{		
+			_stageWidth = stageWidth;
+			_stageHeight = stageHeight;
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
+		}
+
+		public function get loadSpriteSheetsButton():Image
+		{
+			return _loadSpriteSheetsButton;
+		}
+
+		public function set loadSpriteSheetsButton(value:Image):void
+		{
+			_loadSpriteSheetsButton = value;
 		}
 
 		public function get pieceImageVectorAMode():Vector.<Image>
@@ -118,6 +133,9 @@ package
 						_loadSpriteSheetsButton.pivotY = _loadSpriteSheetsButton.height / 2;
 						_loadSpriteSheetsButton.x = 178;
 						_loadSpriteSheetsButton.y = 532;
+						//_loadSpriteSheetsButton.width = _stageWidth / 10 * 2;
+						//_loadSpriteSheetsButton.height = _stageWidth / 10 / 2;
+						trace(_stageHeight);
 						addChild(_loadSpriteSheetsButton);
 						break;
 					

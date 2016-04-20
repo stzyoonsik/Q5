@@ -8,7 +8,6 @@ package
 	import flash.filesystem.File;
 	import flash.net.URLRequest;
 	
-	import starling.display.Image;
 	
 	//import starling.events.Event;
 
