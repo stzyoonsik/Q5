@@ -312,4 +312,8 @@
 
 
 
+<extensions>
+        
+    <extensionID>com.yoonsik.YoonsikExtension</extensionID>
+    </extensions>
 </application>

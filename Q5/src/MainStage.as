@@ -1,7 +1,6 @@
 package
 {	
-	
-	//import com.lpesign.ToastExtension;
+	import com.yoonsik.YoonsikExtension;
 	
 	import flash.desktop.NativeApplication;
 	import flash.display.Screen;
@@ -29,7 +28,8 @@ package
 	
 	public class MainStage extends Sprite
 	{
-		//private var t:ToastExtension = new ToastExtension();
+		private var t:YoonsikExtension = new YoonsikExtension();
+		
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 		private var _animationMode:AnimationMode;
@@ -426,7 +426,7 @@ package
 //						trace("축소");
 //					}
 					
-					//t.toast(_imageMode.currentImageTextField.text);
+					t.toast(_imageMode.currentImageTextField.text);
 					
 					FunctionMgr.makeVisibleFalse(_imageMode.spriteListVector);
 					
