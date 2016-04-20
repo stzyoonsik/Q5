@@ -57,12 +57,17 @@ package
 		
 		public function MainStage()
 		{
-			trace(Screen.mainScreen.bounds);
+			
 			_screenWidth = Screen.mainScreen.bounds.width;
 			_screenHeight = Screen.mainScreen.bounds.height;
 			_loadResource = new GUILoader(onLoadingComplete);
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onBack);
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
+			
+			//stage.stageWidth = _screenWidth;
+			//stage.stageHeight = _screenHeight;
+			
+			
 			
 		}
 	
@@ -174,39 +179,48 @@ package
 				{
 					case "radioButtonOff":
 						_animationModeOffButton = new Image(_guiArray[i].texture);
-						_animationModeOffButton.x = 350;
-						_animationModeOffButton.y = 500;
+						_animationModeOffButton.x = _screenWidth / 10 * 4.5;
+						_animationModeOffButton.y = _screenHeight / 10 * 6;						
+						_animationModeOffButton.width = _screenWidth / 10 / 2;
+						_animationModeOffButton.height = _animationModeOffButton.width;
+						_animationModeOffButton.alignPivot("center", "center");
 						_animationModeOffButton.visible = false;
 						addChild(_animationModeOffButton);
 						
 						_imageModeOffButton = new Image(_guiArray[i].texture);
-						_imageModeOffButton.x = 350;
-						_imageModeOffButton.y = 550;
+						_imageModeOffButton.x = _screenWidth / 10 * 4.5;
+						_imageModeOffButton.y = _screenHeight / 10 * 8;
+						_imageModeOffButton.width = _screenWidth / 10 / 2;
+						_imageModeOffButton.height = _imageModeOffButton.width;
+						_imageModeOffButton.alignPivot("center", "center");
 						_imageModeOffButton.visible = true;
 						addChild(_imageModeOffButton);						
 						break;
 					case "radioButtonOn":
 						_animationModeOnButton = new Image(_guiArray[i].texture);
-						_animationModeOnButton.x = 350;
-						_animationModeOnButton.y = 500;
+						_animationModeOnButton.x = _screenWidth / 10 * 4.5;
+						_animationModeOnButton.y = _screenHeight / 10 * 6;
+						_animationModeOnButton.width = _screenWidth / 10 / 2;
+						_animationModeOnButton.height = _animationModeOnButton.width;
+						_animationModeOnButton.alignPivot("center", "center");
 						_animationModeOnButton.visible = true;
 						addChild(_animationModeOnButton);
 						
 						_imageModeOnButton = new Image(_guiArray[i].texture);
-						_imageModeOnButton.x = 350;
-						_imageModeOnButton.y = 550;
+						_imageModeOnButton.x = _screenWidth / 10 * 4.5;
+						_imageModeOnButton.y = _screenHeight / 10 * 8;
+						_imageModeOnButton.width = _screenWidth / 10 / 2;
+						_imageModeOnButton.height = _imageModeOnButton.width;
+						_imageModeOnButton.alignPivot("center", "center");
 						_imageModeOnButton.visible = false;
 						addChild(_imageModeOnButton);
 						break;
 					case "content":
-						_content = new Image(_guiArray[i].texture);
-						
-						//_content.width = stage.stageWidth / 10 * 9;
-						//_content.height = stage.stageHeight / 10 * 4;						
-						_content.pivotX = _content.width / 2;
-						_content.pivotY = _content.height / 2;
-						_content.x = 450;
-						_content.y = 250;
+						_content = new Image(_guiArray[i].texture);								
+						_content.x = _screenWidth / 10 / 2;
+						_content.y = _screenHeight / 10 / 2;
+						_content.width = _screenWidth / 10 * 9;
+						_content.height = _screenHeight / 10 * 5;
 						addChild(_content);
 						
 						break;
@@ -214,16 +228,20 @@ package
 				}
 			}
 			
-			_animationModeText = new TextField(150, 32, "Animation Mode");
-			_animationModeText.x = 400;
-			_animationModeText.y = 500;
-			_animationModeText.border = true;
+			_animationModeText = new TextField(_screenWidth / 10, _screenHeight / 10, "Animation Mode");
+			_animationModeText.format.size = 40;			
+			_animationModeText.x = _screenWidth / 10 * 4.5;
+			_animationModeText.y = _screenHeight / 10 * 6.75;			
+			_animationModeText.alignPivot("center", "center");
+			//_animationModeText.border = true;
 			addChild(_animationModeText);
 			
-			_imageModeText = new TextField(150, 32, "Image Mode");
-			_imageModeText.x = 400;
-			_imageModeText.y = 550;
-			_imageModeText.border = true;
+			_imageModeText = new TextField(_screenWidth / 10, _screenHeight / 10, "Image Mode");
+			_imageModeText.format.size = 40;
+			_imageModeText.x = _screenWidth / 10 * 4.5;
+			_imageModeText.y = _screenHeight / 10 * 8.75;
+			_imageModeText.alignPivot("center", "center");
+			//_imageModeText.border = true;
 			addChild(_imageModeText);
 			
 		}

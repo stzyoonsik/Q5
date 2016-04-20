@@ -23,7 +23,7 @@ package
 
 	public class SpriteSheet extends Sprite
 	{
-		private var _loadSpriteSheetsButton:Image;											//애니메이션모드, 이미지모드에서 공유됨. 스프라이트시트를 로드하는 버튼
+		private var _loadSpriteSheetsButton:Sprite = new Sprite();							//애니메이션모드, 이미지모드에서 공유됨. 스프라이트시트를 로드하는 버튼
 		private var _selectSpriteSheetButton:Image;											//화살표버튼
 		
 		private var _spriteSheetList:Sprite = new Sprite();									//스프라이트시트 텍스트필드 를 담는 Sprite		
@@ -54,16 +54,16 @@ package
 			_stageHeight = stageHeight;
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 		}
-
-		public function get loadSpriteSheetsButton():Image
-		{
-			return _loadSpriteSheetsButton;
-		}
-
-		public function set loadSpriteSheetsButton(value:Image):void
-		{
-			_loadSpriteSheetsButton = value;
-		}
+//
+//		public function get loadSpriteSheetsButton():Image
+//		{
+//			return _loadSpriteSheetsButton;
+//		}
+//
+//		public function set loadSpriteSheetsButton(value:Image):void
+//		{
+//			_loadSpriteSheetsButton = value;
+//		}
 
 		public function get pieceImageVectorAMode():Vector.<Image>
 		{
@@ -122,20 +122,20 @@ package
 		 */
 		public function init(guiArray:Vector.<Image>):void
 		{
-			//trace("init");
+			var image:Image;
 			for(var i:int = 0; i<guiArray.length; ++i)
 			{
 				switch(guiArray[i].name)
 				{
 					case "loadButton":
-						_loadSpriteSheetsButton = new Image(guiArray[i].texture);
-						_loadSpriteSheetsButton.pivotX = _loadSpriteSheetsButton.width / 2;
-						_loadSpriteSheetsButton.pivotY = _loadSpriteSheetsButton.height / 2;
-						_loadSpriteSheetsButton.x = 178;
-						_loadSpriteSheetsButton.y = 532;
-						//_loadSpriteSheetsButton.width = _stageWidth / 10 * 2;
-						//_loadSpriteSheetsButton.height = _stageWidth / 10 / 2;
-						trace(_stageHeight);
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10 * 3;
+						image.height = image.width / 4;
+						_loadSpriteSheetsButton.addChild(image);
+						
+						_loadSpriteSheetsButton.x = _stageWidth / 10 * 2;
+						_loadSpriteSheetsButton.y = _stageHeight / 10 * 6.5;
+						_loadSpriteSheetsButton.alignPivot("center", "center");
 						addChild(_loadSpriteSheetsButton);
 						break;
 					
@@ -192,15 +192,12 @@ package
 			{
 				
 				_loadSpriteSheetsButton.scale = 0.8;
-			}			
-			else
-			{
-				_loadSpriteSheetsButton.scale = 1;
 			}
 			
 			touch = event.getTouch(_loadSpriteSheetsButton, TouchPhase.ENDED);
 			if(touch)
 			{
+				_loadSpriteSheetsButton.scale = 1;
 				//trace("로드스프라이트시트버튼");
 				//이미지 파일만 여는 예외처리 필요
 				var file:File = File.applicationDirectory;

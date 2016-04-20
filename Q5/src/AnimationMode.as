@@ -13,9 +13,9 @@ package
 
 	public class AnimationMode extends Sprite
 	{
-		private var _playButton:Image;
-		private var _pauseButton:Image;
-		private var _deleteButton:Image;	
+		private var _playButton:Sprite = new Sprite();
+		private var _pauseButton:Sprite = new Sprite();
+		private var _deleteButton:Sprite = new Sprite();	
 		
 		private var _pieceImage:Image = new Image(null);									//화면에 보여주기 용 스프라이트
 		
@@ -24,7 +24,7 @@ package
 		private var _imageVector:Vector.<Image> = new Vector.<Image>;
 		
 		private var _delay:uint = 100;
-		private var _timer:Timer;// = new Timer(delay);
+		private var _timer:Timer;
 		
 		private var _nameTextField:TextField = new TextField(200,24,"");						//현재 재생중인 애니메이션의 이미지의 이름을 알려주는 텍스트필드
 		private var _indexTextField:TextField = new TextField(200, 24, "");
@@ -114,42 +114,43 @@ package
 
 		public function init(guiArray:Vector.<Image>):void
 		{
+			var image:Image;
 			trace("init");
 			for(var i:int = 0; i<guiArray.length; ++i)
 			{
 				switch(guiArray[i].name)
 				{
-					case "playButton":
-						_playButton = new Image(guiArray[i].texture);
-						_playButton.x = 632;
-						_playButton.y = 532;
-						//_playButton.width = _stageWidth / 10;
-						//_playButton.height = _stageHeight / 10 * 6;
-						_playButton.pivotX = _playButton.width / 2;
-						_playButton.pivotY = _playButton.height / 2;						
-						addChild(_playButton);						
-						trace("stageWidth = " + _stageWidth + "stageHeight = " + _stageHeight);
-						trace("playButton x = " + _playButton.x + "playButton y = " + _playButton.y);
+					case "playButton":						
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10;
+						image.height = image.width;
+						_playButton.addChild(image);
+						
+						_playButton.x = _stageWidth / 10 * 6;
+						_playButton.y = _stageHeight / 10 * 7; 		
+						_playButton.alignPivot("center", "center");
+						addChild(_playButton);	
 						break;
 					case "pauseButton":
-						_pauseButton = new Image(guiArray[i].texture);						
-						_pauseButton.x = 732;
-						_pauseButton.y = 532;
-						//_pauseButton.width = _stageWidth / 10;
-						//_pauseButton.height = _stageHeight / 10 * 6;
-						_pauseButton.pivotX = _pauseButton.width / 2;
-						_pauseButton.pivotY = _pauseButton.height / 2;
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10;
+						image.height = image.width;
+						_pauseButton.addChild(image);
+						
+						_pauseButton.x = _stageWidth / 10 * 7.25;
+						_pauseButton.y = _stageHeight / 10 * 7;
+						_pauseButton.alignPivot("center", "center");
 						addChild(_pauseButton);
 						break;
 					case "deleteButton":
-						_deleteButton = new Image(guiArray[i].texture);
-						_deleteButton.x = 832;
-						_deleteButton.y = 532;
-						//_deleteButton.width = _stageWidth / 10;
-						//_deleteButton.height = _stageHeight / 10 * 6;
-						_deleteButton.pivotX = _deleteButton.width / 2;
-						_deleteButton.pivotY = _deleteButton.height / 2;
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10;
+						image.height = image.width;
+						_deleteButton.addChild(image);
 						
+						_deleteButton.x = _stageWidth / 10 * 8.5;
+						_deleteButton.y = _stageHeight / 10 * 7;
+						_deleteButton.alignPivot("center", "center");						
 						addChild(_deleteButton);
 						break;
 					
@@ -191,19 +192,14 @@ package
 			var touch:Touch = event.getTouch(_playButton, TouchPhase.BEGAN);
 			if(touch)
 			{
-				
-				//_playButton.width = stageWidth / 10;
-				//_playButton.height = _playButton.width
-			}
-			else
-			{
-				//_playButton.scale = 1;
+				_playButton.scale = 0.8;
 			}
 			
 			touch = event.getTouch(_playButton, TouchPhase.ENDED);
 			if(touch)
 			{
 				trace("플레이버튼");
+				_playButton.scale = 1;
 				dispatchEvent(new Event("Play"));
 			}
 		}
@@ -221,15 +217,12 @@ package
 				
 				_pauseButton.scale = 0.8;
 			}
-			else
-			{
-				_pauseButton.scale = 1;
-			}
 			
 			touch = event.getTouch(_pauseButton, TouchPhase.ENDED);
 			if(touch)
 			{
 				trace("퍼즈버튼");
+				_pauseButton.scale = 1;
 				dispatchEvent(new Event("Pause"));
 			}
 		}
@@ -247,15 +240,12 @@ package
 				
 				_deleteButton.scale = 0.8;
 			}
-			else
-			{
-				_deleteButton.scale = 1;
-			}
 			
 			touch = event.getTouch(_deleteButton, TouchPhase.ENDED);
 			if(touch)
 			{
 				trace("삭제버튼");
+				_deleteButton.scale = 1;
 				dispatchEvent(new Event("Delete"));
 			}
 		}
