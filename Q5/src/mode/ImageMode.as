@@ -315,7 +315,7 @@ package mode
 			if(touch)
 			{
 				_imageSaveButton.scale = 1;				
-				dispatchEvent(new Event("save"));
+				dispatchEvent(new Event("saveImage"));
 			}
 		}
 		
@@ -332,7 +332,7 @@ package mode
 			if(touch)
 			{
 				_sheetSaveButton.scale = 1;				
-				//dispatchEvent(new Event("save"));
+				dispatchEvent(new Event("saveSheet"));
 			}
 		}
 		

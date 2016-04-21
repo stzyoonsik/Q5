@@ -6,6 +6,7 @@ package mode
 	import flash.desktop.NativeApplication;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.PNGEncoderOptions;
 	import flash.display.Screen;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
@@ -18,6 +19,8 @@ package mode
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
+	
+	import Exporter.Exporter;
 	
 	import packer.MaxRectPacker;
 	
@@ -40,6 +43,7 @@ package mode
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 		
+		private var _exporter:Exporter;
 		private var _modeChooser:ModeChooser;
 		private var _animationMode:AnimationMode;
 		private var _imageMode:ImageMode; 
@@ -93,6 +97,7 @@ package mode
 			{	
 				moveToImage(_loadResource.imageDataArray);
 				//init();
+				_exporter = new Exporter();
 				
 				_modeChooser = new ModeChooser(_stageWidth, _stageHeight);
 				_modeChooser.init(_guiArray); 
@@ -115,7 +120,8 @@ package mode
 				
 				_imageMode = new ImageMode(_stageWidth, _stageHeight);
 				_imageMode.init(_guiArray);
-				_imageMode.addEventListener("save", onClickImageSaveButton);
+				_imageMode.addEventListener("saveImage", onClickImageSaveButton);
+				_imageMode.addEventListener("saveSheet", onClickSheetSaveButton);
 				_imageMode.addEventListener("add", onAddImage);
 				_imageMode.visible = false;
 				addChild(_imageMode);
@@ -398,9 +404,28 @@ package mode
 			_YSExt.toast(_imageMode.currentImageTextField.text + ".png 저장 완료");
 		}
 		
+		/**
+		 * 현재 시트를 png와 xml로 저장하는 메소드 
+		 * 
+		 */
+		private function onClickSheetSaveButton():void
+		{
+			_exporter.exportToPNG(new Bitmap(_spriteSheet.spriteSheetDic[_spriteSheet.currentTextField.text].bitmapData));
+			_YSExt.toast("new_sprite_sheet"+_exporter.count+".png 저장");
+			
+			_exporter.exportToXML(_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text]);
+			_YSExt.toast("new_sprite_sheet"+_exporter.count+".xml 저장");
+			_exporter.count++;
+		}
+		
+		/**
+		 * 현재 보여지는 시트에 이미지를 maxrect packing하는 메소드 
+		 * 
+		 */
 		private function onAddImage():void
 		{
 			_addedSpriteSheetVector = new Vector.<Image>;
+			var currentSheetName:String = _spriteSheet.currentTextField.text;
 			
 			var maxRect:MaxRectPacker = new MaxRectPacker(1024, 1024);
 			var tempDic:Dictionary = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text];
@@ -431,7 +456,6 @@ package mode
 			for(var i:int = 0; i < tempVec.length; ++i)
 			{
 				var rect:Rectangle = maxRect.quickInsert(tempVec[i].bitmapData.width, tempVec[i].bitmapData.height); 
-				//trace("삽입 위치 = " + rect);
 				if(rect == null)
 				{
 					_YSExt.toast(tempVec[i].name + " 공간 부족");
@@ -448,6 +472,7 @@ package mode
 				imageData.rect.height = tempVec[i].bitmapData.height;
 				_addedSpriteSheetDic[imageData.name] = imageData;
 				_addedSpriteSheetVector.push(imageData.image);
+				
 			}
 			
 			var tempSpr:flash.display.Sprite = new flash.display.Sprite();
@@ -471,13 +496,15 @@ package mode
 			var texture:Texture = Texture.fromBitmapData(newBmd);			
 			var image:Image = new Image(texture);
 			
+			var imageData:ImageData = new ImageData();
+			imageData.image = image;
+			imageData.bitmapData = newBmd;
+			imageData.rect = newBmd.rect;
+			imageData.name = currentSheetName;
 			
-			var currentSpriteName:String = _spriteSheet.currentTextField.text;
-			
-			
-			_spriteSheet.sheetImageDicIMode[currentSpriteName] = _addedSpriteSheetDic;
-			
-			_spriteSheet.sheetImageDicAMode[currentSpriteName] = _addedSpriteSheetVector;
+			_spriteSheet.spriteSheetDic[currentSheetName] = imageData;
+			_spriteSheet.sheetImageDicIMode[currentSheetName] = _addedSpriteSheetDic;			
+			_spriteSheet.sheetImageDicAMode[currentSheetName] = _addedSpriteSheetVector;
 			
 			var scaledSpriteSheet:Sprite = new Sprite();
 			image.width *= _stageWidth / 2500;
@@ -490,9 +517,9 @@ package mode
 			
 			_spriteSheet.addChild(scaledSpriteSheet);
 			
-			_spriteSheet.scaledSpriteSheetDic[currentSpriteName].visible = false;
-			_spriteSheet.scaledSpriteSheetDic[currentSpriteName].dispose();
-			_spriteSheet.scaledSpriteSheetDic[currentSpriteName] = scaledSpriteSheet;
+			_spriteSheet.scaledSpriteSheetDic[currentSheetName].visible = false;
+			_spriteSheet.scaledSpriteSheetDic[currentSheetName].dispose();
+			_spriteSheet.scaledSpriteSheetDic[currentSheetName] = scaledSpriteSheet;
 		}
 		
 	
