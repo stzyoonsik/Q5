@@ -1,6 +1,5 @@
-package
+package mode
 {
-	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
 	import starling.display.Image;
@@ -219,7 +218,6 @@ package
 			var touch:Touch = event.getTouch(_pauseButton, TouchPhase.BEGAN);
 			if(touch)
 			{
-				
 				_pauseButton.scale = 0.8;
 			}
 			
@@ -242,7 +240,6 @@ package
 			var touch:Touch = event.getTouch(_deleteButton, TouchPhase.BEGAN);
 			if(touch)
 			{
-				
 				_deleteButton.scale = 0.8;
 			}
 			

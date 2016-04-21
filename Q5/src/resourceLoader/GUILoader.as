@@ -1,4 +1,4 @@
-package
+package resourceLoader
 {
 	import flash.display.BitmapData;
 	import flash.display.Loader;

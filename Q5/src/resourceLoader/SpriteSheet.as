@@ -1,4 +1,4 @@
-package
+package resourceLoader
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -33,7 +33,8 @@ package
 		
 		private var _spriteSheetDic:Dictionary = new Dictionary();							//사용자가 Load SpriteSheets 버튼을 통해 스프라이트시트를 로드하면 이 딕셔너리에 추가됨
 		private var _scaledSpriteSheetDic:Dictionary = new Dictionary();					//위와 같지만 이미지 크기를 1/4로 줄인 이미지가 담긴 딕셔너리
-				
+		//private var _addedSpriteSheet:Sprite = new Sprite();
+		
 		private var _pieceImageVectorAMode:Vector.<Image>;									//조각난 이미지들을 담는 배열		- 애니메이션모드용
 		private var _sheetImageDicAMode:Dictionary = new Dictionary();
 		
@@ -64,6 +65,26 @@ package
 //		{
 //			_loadSpriteSheetsButton = value;
 //		}
+
+//		public function get addedSpriteSheet():Sprite
+//		{
+//			return _addedSpriteSheet;
+//		}
+//
+//		public function set addedSpriteSheet(value:Sprite):void
+//		{
+//			_addedSpriteSheet = value;
+//		}
+
+		public function get scaledSpriteSheetDic():Dictionary
+		{
+			return _scaledSpriteSheetDic;
+		}
+
+		public function set scaledSpriteSheetDic(value:Dictionary):void
+		{
+			_scaledSpriteSheetDic = value;
+		}
 
 		public function get pieceImageVectorAMode():Vector.<Image>
 		{
@@ -339,6 +360,7 @@ package
 			var imageData:ImageData = new ImageData();
 			imageData.image = image;
 			imageData.bitmapData = bitmap.bitmapData;
+			imageData.rect = bitmap.bitmapData.rect;
 			//이름 따오기
 			var name:String = loaderInfo.url;
 			var slash:int = name.lastIndexOf("/");
@@ -350,7 +372,7 @@ package
 			
 			//보여주기용 스프라이트시트 세팅
 			//image.scale = 0.25;
-			var scaledSpriteSheet:Sprite = new Sprite;
+			var scaledSpriteSheet:Sprite = new Sprite();
 			image.width *= _stageWidth / 2500;
 			image.height *= _stageHeight / 2500;
 			scaledSpriteSheet.addChild(image);

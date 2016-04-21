@@ -4,17 +4,30 @@ package
 	import com.yoonsik.YoonsikExtension;
 	
 	import flash.desktop.NativeApplication;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Screen;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
 	import flash.filesystem.File;
 	import flash.filesystem.FileMode;
 	import flash.filesystem.FileStream;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	
+	import mode.AnimationMode;
+	import mode.ImageMode;
+	
+	import packer.MaxRectPacker;
+	
+	import resourceLoader.GUILoader;
+	import resourceLoader.SpriteSheet;
+	
+	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -46,6 +59,9 @@ package
 		private var _imageModeText:TextField;
 		
 		private var _spriteVector:Vector.<TextField> = new Vector.<TextField>;
+		
+		private var _addedSpriteSheetVector:Vector.<Image>;
+		private var _addedSpriteSheetDic:Dictionary = new Dictionary();
 		
 		public function MainStage()
 		{
@@ -130,7 +146,8 @@ package
 				
 				_imageMode = new ImageMode(_stageWidth, _stageHeight);
 				_imageMode.init(_guiArray);
-				_imageMode.addEventListener("save", onClickSaveButton);
+				_imageMode.addEventListener("save", onClickImageSaveButton);
+				_imageMode.addEventListener("add", onAddImage);
 				_imageMode.visible = false;
 				addChild(_imageMode);
 				
@@ -345,7 +362,7 @@ package
 			{
 				count++;
 				
-				var textField:TextField = new TextField(_stageWidth / 10 * 2, _stageHeight / 10 / 2, pieceDic[key].name);
+				var textField:TextField = new TextField(_stageWidth / 10 * 1.5, _stageHeight / 10 / 2, pieceDic[key].name);
 				textField.format.size = 30;
 				textField.alignPivot("center", "center");
 				textField.y = setY;
@@ -404,9 +421,8 @@ package
 				var touch:Touch = event.getTouch(_spriteVector[i], TouchPhase.ENDED);
 				if(touch)
 				{
-					_imageMode.saveButton.visible = true;
 					
-					trace(touch.target.name);
+					//trace(touch.target.name);
 					_imageMode.pieceImage.texture = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].image.texture;
 					_imageMode.pieceImage.width = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.width * _stageWidth / 1000;
 					_imageMode.pieceImage.height = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.height * _stageHeight / 1000;
@@ -538,10 +554,15 @@ package
 		 * 
 		 * 디스패치된 저장 버튼 클릭 메소드 
 		 */
-		private function onClickSaveButton():void
+		private function onClickImageSaveButton():void
 		{
+			if(_imageMode.currentImageTextField.text == "")
+			{
+				trace("저장할 이미지를 선택하세요");
+				_YSExt.toast("저장할 이미지를 선택하세요.");
+				return;
+			}
 			var pngFile:File = File.documentsDirectory.resolvePath("images/" + _imageMode.currentImageTextField.text + ".png");
-			
 		
 			var byteArray:ByteArray = PNGEncoder.encode(_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][_imageMode.currentImageTextField.text].bitmapData);
 			
@@ -549,6 +570,124 @@ package
 			fileStream.open(pngFile, FileMode.WRITE);
 			fileStream.writeBytes(byteArray);
 			fileStream.close();
+			
+			_YSExt.toast(_imageMode.currentImageTextField.text + ".png 저장 완료");
 		}
+		
+		private function onAddImage():void
+		{
+			_addedSpriteSheetVector = new Vector.<Image>;
+			
+			var maxRect:MaxRectPacker = new MaxRectPacker(1024, 1024);
+			var tempDic:Dictionary = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text];
+			
+			var tempVec:Vector.<ImageData> = _imageMode.addedImageVector;
+			//_addedSpriteSheetVector = _imageMode.addedImageVector;
+			
+			trace("---------tempVec---------");
+			for(var i:int = 0; i < tempVec.length; ++i)
+			{
+				_YSExt.toast(tempVec[i].name + " 추가");
+				trace(tempVec[i].name);	
+			}
+			
+			for(var key:String in tempDic)
+			{
+				//trace(tempDic[key].name);
+				var imageData:ImageData = new ImageData();
+				imageData.image = tempDic[key].image;
+				imageData.bitmapData = tempDic[key].bitmapData;
+				imageData.name = tempDic[key].name;
+				imageData.rect.x = tempDic[key].rect.x;
+				imageData.rect.y = tempDic[key].rect.y;
+				imageData.rect.width = tempDic[key].bitmapData.width;
+				imageData.rect.height = tempDic[key].bitmapData.height;
+				tempVec.push(imageData);
+			}
+			
+			
+			
+			
+			
+			tempVec.sort(FunctionMgr.compareAreaDescending);
+			for(var i:int = 0; i < tempVec.length; ++i)
+			{
+				var rect:Rectangle = maxRect.quickInsert(tempVec[i].bitmapData.width, tempVec[i].bitmapData.height); 
+				//trace("삽입 위치 = " + rect);
+				if(rect == null)
+				{
+					_YSExt.toast(tempVec[i].name + " 공간 부족");
+					continue;
+				}
+				
+				var imageData:ImageData = new ImageData();
+				imageData.image = tempVec[i].image;
+				imageData.bitmapData = tempVec[i].bitmapData;
+				imageData.name = tempVec[i].name;
+				imageData.rect.x = rect.x;
+				imageData.rect.y = rect.y;
+				imageData.rect.width = tempVec[i].bitmapData.width;
+				imageData.rect.height = tempVec[i].bitmapData.height;
+				_addedSpriteSheetDic[imageData.name] = imageData;
+				_addedSpriteSheetVector.push(imageData.image);
+			}
+			
+			var tempSpr:flash.display.Sprite = new flash.display.Sprite();
+			
+			var bmd:BitmapData = new BitmapData(1024, 1024);
+			
+			for(var key:String in _addedSpriteSheetDic)
+			{
+				var bitmap:Bitmap = new Bitmap(_addedSpriteSheetDic[key].bitmapData);
+				bitmap.x = _addedSpriteSheetDic[key].rect.x;
+				bitmap.y = _addedSpriteSheetDic[key].rect.y;
+				tempSpr.addChild(bitmap);
+				var rect:Rectangle = new Rectangle(0, 0, bitmap.bitmapData.width, bitmap.bitmapData.height);
+				bmd.merge(bitmap.bitmapData, rect, new Point(bitmap.x, bitmap.y), 0xFF, 0xFF, 0xFF, 0xFF);
+			}
+			
+			var rt:Rectangle = new Rectangle(0, 0, FunctionMgr.getCorrectLength(tempSpr.width), FunctionMgr.getCorrectLength(tempSpr.height));
+			var newBmd:BitmapData = new BitmapData(rt.width, rt.height);
+			var pt:Point = new Point(0,0);
+			newBmd.copyPixels(bmd, rt, pt);
+			var texture:Texture = Texture.fromBitmapData(newBmd);			
+			var image:Image = new Image(texture);
+			
+			//_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text];
+			
+			//_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text] ************ dispose 해야함
+			
+			var currentSpriteName:String = _spriteSheet.currentTextField.text;
+			
+			
+			_spriteSheet.sheetImageDicIMode[currentSpriteName] = _addedSpriteSheetDic;
+			
+//			for(var key:String in _spriteSheet.sheetImageDicAMode[currentSpriteName])
+//			{
+//				_spriteSheet.sheetImageDicAMode[currentSpriteName][key].dispose();
+//				_spriteSheet.sheetImageDicAMode[currentSpriteName][key] = null;
+//			}
+			//_spriteSheet.sheetImageDicAMode[currentSpriteName] = null;
+			
+			_spriteSheet.sheetImageDicAMode[currentSpriteName] = _addedSpriteSheetVector;
+			
+			//_spriteSheet.scaledSpriteSheetDic[_spriteSheet.currentTextField.text].visible = false;
+			var scaledSpriteSheet:Sprite = new Sprite();
+			image.width *= _stageWidth / 2500;
+			image.height *= _stageHeight / 2500;
+			scaledSpriteSheet.addChild(image);
+			
+			scaledSpriteSheet.x = _stageWidth / 10 * 2.5;
+			scaledSpriteSheet.y = _stageHeight / 10 * 3;
+			scaledSpriteSheet.alignPivot("center", "center");
+			
+			_spriteSheet.addChild(scaledSpriteSheet);
+			
+			_spriteSheet.scaledSpriteSheetDic[currentSpriteName].visible = false;
+			_spriteSheet.scaledSpriteSheetDic[currentSpriteName].dispose();
+			_spriteSheet.scaledSpriteSheetDic[currentSpriteName] = scaledSpriteSheet;
+		}
+		
+	
 	}
 }

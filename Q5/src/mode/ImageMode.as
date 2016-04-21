@@ -1,5 +1,15 @@
-package
+package mode
 {
+	
+	import flash.display.Bitmap;
+	import flash.display.Loader;
+	import flash.display.LoaderInfo;
+	import flash.events.FileListEvent;
+	import flash.events.IOErrorEvent;
+	import flash.filesystem.File;
+	import flash.net.URLRequest;
+	
+	import packer.MaxRectPacker;
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -8,10 +18,13 @@ package
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.text.TextField;
+	import starling.textures.Texture;
 	
 	public class ImageMode extends Sprite
 	{
-		private var _saveButton:Sprite = new Sprite();
+		private var _addButton:Sprite = new Sprite();
+		private var _imageSaveButton:Sprite = new Sprite();
+		private var _sheetSaveButton:Sprite = new Sprite();
 		private var _arrowUp:Image;
 		private var _arrowDown:Image;
 		private var _currentPage:int;
@@ -24,6 +37,9 @@ package
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 		
+		private var _numberOfAddedPNG:int;
+		private var _addedImageVector:Vector.<ImageData>;
+		
 		public function ImageMode(stageWidth:int, stageHeight:int)
 		{
 			_stageWidth = stageWidth;
@@ -32,14 +48,15 @@ package
 			
 		}
 		
-		public function get saveButton():Sprite
+
+		public function get addedImageVector():Vector.<ImageData>
 		{
-			return _saveButton;
+			return _addedImageVector;
 		}
 
-		public function set saveButton(value:Sprite):void
+		public function set addedImageVector(value:Vector.<ImageData>):void
 		{
-			_saveButton = value;
+			_addedImageVector = value;
 		}
 
 		public function get selectSpriteSheetButton():Image
@@ -109,10 +126,11 @@ package
 			{
 				switch(guiArray[i].name)
 				{
+					
 					case "selectButton":
 						_selectSpriteSheetButton = new Image(guiArray[i].texture);
-						_selectSpriteSheetButton.x = _stageWidth / 10 * 8;
-						_selectSpriteSheetButton.y = _stageHeight / 10 * 6.5;
+						_selectSpriteSheetButton.x = _stageWidth / 10 * 7.5;
+						_selectSpriteSheetButton.y = _stageHeight / 10 * 6;
 						_selectSpriteSheetButton.width = _stageWidth / 10 / 3;
 						_selectSpriteSheetButton.height = _selectSpriteSheetButton.width;
 						_selectSpriteSheetButton.alignPivot("center", "center");
@@ -122,7 +140,7 @@ package
 					
 					case "arrowUp":
 						_arrowUp = new Image(guiArray[i].texture);
-						_arrowUp.x = _stageWidth / 10 * 8;
+						_arrowUp.x = _stageWidth / 10 * 7.5;
 						_arrowUp.y = _stageHeight / 10 * 7.5;
 						_arrowUp.width = _stageWidth / 10 / 3;
 						_arrowUp.height = _arrowUp.width;
@@ -133,7 +151,7 @@ package
 					
 					case "arrowDown":
 						_arrowDown = new Image(guiArray[i].texture);
-						_arrowDown.x = _stageWidth / 10 * 8;
+						_arrowDown.x = _stageWidth / 10 * 7.5;
 						_arrowDown.y = _stageHeight / 10 * 8.5;
 						_arrowDown.width = _stageWidth / 10 / 3;
 						_arrowDown.height = _arrowDown.width;
@@ -141,17 +159,41 @@ package
 						_arrowDown.visible = false;
 						addChild(_arrowDown);
 						break;
-					case "saveButton":
+					
+					case "sheetSaveButton":
 						image = new Image(guiArray[i].texture);
 						image.width = _stageWidth / 10;
 						image.height = image.width;
-						_saveButton.addChild(image);
+						_sheetSaveButton.addChild(image);
 						
-						_saveButton.x = _stageWidth / 10 * 9;
-						_saveButton.y = _stageHeight / 10 * 7;						
-						_saveButton.alignPivot("center", "center");
-						_saveButton.visible = true;
-						addChild(_saveButton);
+						_sheetSaveButton.x = _stageWidth / 10 * 8.5;
+						_sheetSaveButton.y = _stageHeight / 10 * 8.25;						
+						_sheetSaveButton.alignPivot("center", "center");
+						addChild(_sheetSaveButton);
+						break;
+					
+					case "imageSaveButton":
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10;
+						image.height = image.width;
+						_imageSaveButton.addChild(image);
+						
+						_imageSaveButton.x = _stageWidth / 10 * 9.5;
+						_imageSaveButton.y = _stageHeight / 10 * 8.25;						
+						_imageSaveButton.alignPivot("center", "center");
+						addChild(_imageSaveButton);
+						break;
+					
+					case "addButton":
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth / 10;
+						image.height = image.width;
+						_addButton.addChild(image);
+						
+						_addButton.x = _stageWidth / 10 * 9;
+						_addButton.y = _stageHeight / 10 * 6.25;						
+						_addButton.alignPivot("center", "center");
+						addChild(_addButton);					
 						break;
 				}
 			}
@@ -182,9 +224,11 @@ package
 		private function onAddedEvents(event:starling.events.Event):void
 		{				
 			_selectSpriteSheetButton.addEventListener(TouchEvent.TOUCH, onClickSpriteListButton);
-			_arrowUp.addEventListener(TouchEvent.TOUCH, onArrowUp);
-			_arrowDown.addEventListener(TouchEvent.TOUCH, onArrowDown);
-			_saveButton.addEventListener(TouchEvent.TOUCH, onSaveButton);
+			_arrowUp.addEventListener(TouchEvent.TOUCH, onClickArrowUp);
+			_arrowDown.addEventListener(TouchEvent.TOUCH, onClickArrowDown);
+			_imageSaveButton.addEventListener(TouchEvent.TOUCH, onClickImageSaveButton);
+			_sheetSaveButton.addEventListener(TouchEvent.TOUCH, onClickSheetSaveButton);
+			_addButton.addEventListener(TouchEvent.TOUCH, onClickAddButton);
 		}
 		
 		/**
@@ -192,7 +236,7 @@ package
 		 * @param event ↑ 버튼 클릭
 		 * 페이지를 내리고 현재 페이지에 해당하는 스프라이트 리스트를 보여줌
 		 */
-		private function onArrowUp(event:TouchEvent):void
+		private function onClickArrowUp(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_arrowUp, TouchPhase.ENDED);
 			if(touch)
@@ -213,7 +257,7 @@ package
 		 * @param event ↓ 버튼 클릭
 		 * 페이지를 올리고 현재 페이지에 해당하는 스프라이트 리스트를 보여줌
 		 */
-		private function onArrowDown(event:TouchEvent):void
+		private function onClickArrowDown(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_arrowDown, TouchPhase.ENDED);
 			if(touch)
@@ -258,22 +302,109 @@ package
 			_arrowDown.visible = false;
 		}
 		
-		private function onSaveButton(event:TouchEvent):void
+		private function onClickImageSaveButton(event:TouchEvent):void
 		{
-			var touch:Touch = event.getTouch(_saveButton, TouchPhase.BEGAN);
+			var touch:Touch = event.getTouch(_imageSaveButton, TouchPhase.BEGAN);
 			if(touch)
 			{
 				
-				_saveButton.scale = 0.8;
+				_imageSaveButton.scale = 0.8;
 			}
 			
-			touch = event.getTouch(_saveButton, TouchPhase.ENDED);
+			touch = event.getTouch(_imageSaveButton, TouchPhase.ENDED);
 			if(touch)
 			{
-				_saveButton.scale = 1;
+				_imageSaveButton.scale = 1;				
 				dispatchEvent(new Event("save"));
 			}
 		}
 		
+		private function onClickSheetSaveButton(event:TouchEvent):void
+		{
+			var touch:Touch = event.getTouch(_sheetSaveButton, TouchPhase.BEGAN);
+			if(touch)
+			{
+				
+				_sheetSaveButton.scale = 0.8;
+			}
+			
+			touch = event.getTouch(_sheetSaveButton, TouchPhase.ENDED);
+			if(touch)
+			{
+				_sheetSaveButton.scale = 1;				
+				//dispatchEvent(new Event("save"));
+			}
+		}
+		
+		private function onClickAddButton(event:TouchEvent):void
+		{
+			
+			var touch:Touch = event.getTouch(_addButton, TouchPhase.BEGAN);
+			if(touch)
+			{
+				_addButton.scale = 0.8;
+			}
+			
+			touch = event.getTouch(_addButton, TouchPhase.ENDED);
+			if(touch)
+			{
+				_addButton.scale = 1;	
+				
+				var file:File = File.applicationDirectory;
+				file.browseForOpenMultiple("Select SpriteSheet PNG Files");
+				file.addEventListener(FileListEvent.SELECT_MULTIPLE, onFilesSelected);
+			}
+		}
+		
+		private function onFilesSelected(event:FileListEvent):void
+		{
+			_numberOfAddedPNG = 0;
+			_numberOfAddedPNG += event.files.length;
+			
+			for (var i:int = 0; i < event.files.length; ++i) 
+			{
+				//trace(event.files[i].nativePath);
+				//PNG 로드
+				var loader:Loader = new Loader();				
+				loader.load(new URLRequest(event.files[i].url));				
+				loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoaderComplete);				
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaderFailed);
+				
+			}
+			_addedImageVector = new Vector.<ImageData>;
+		}
+		
+		private function onLoaderComplete(event:flash.events.Event):void
+		{
+			var loaderInfo:LoaderInfo = LoaderInfo(event.target);
+			
+			var bitmap:Bitmap = loaderInfo.content as Bitmap;
+			var texture:Texture = Texture.fromBitmap(bitmap);			
+			var image:Image = new Image(texture);
+			var imageData:ImageData = new ImageData();
+			
+			
+			var name:String = loaderInfo.url;
+			var slash:int = name.lastIndexOf("/");
+			var dot:int = name.lastIndexOf(".");
+			name = name.substring(slash + 1, dot);		
+			imageData.name = name;
+			imageData.image = image;
+			imageData.bitmapData = bitmap.bitmapData;
+			imageData.rect = bitmap.bitmapData.rect;
+			_addedImageVector.push(imageData);
+			
+			//선택된 추가 이미지들이 다 로드 되면
+			if(_numberOfAddedPNG == _addedImageVector.length)
+			{
+				dispatchEvent(new Event("add"));
+			}
+		
+		}
+		
+		private function onLoaderFailed(event:flash.events.Event):void
+		{
+			trace("로드 실패 " + event);			
+		}
 	}
 }
