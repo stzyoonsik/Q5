@@ -9,6 +9,7 @@ package
 	import flash.display.StageScaleMode;
 	
 	import starling.core.Starling;
+	import mode.MainStage;
 	
 	//[SWF(width="1280", height="800")]
 	public class Q5 extends Sprite

@@ -1,4 +1,4 @@
-package
+package mode
 {	
 	import com.adobe.nativeExtensions.Vibration;
 	import com.yoonsik.YoonsikExtension;
@@ -19,15 +19,11 @@ package
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	
-	import mode.AnimationMode;
-	import mode.ImageMode;
-	
 	import packer.MaxRectPacker;
 	
 	import resourceLoader.GUILoader;
 	import resourceLoader.SpriteSheet;
 	
-	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -43,21 +39,15 @@ package
 		private var _vibeExt:Vibration = new Vibration(); 
 		private var _stageWidth:int;
 		private var _stageHeight:int;
+		
+		private var _modeChooser:ModeChooser;
 		private var _animationMode:AnimationMode;
 		private var _imageMode:ImageMode; 
 		private var _spriteSheet:SpriteSheet;
 		private var _loadResource:GUILoader;
 		
 		private var _guiArray:Vector.<Image> = new Vector.<Image>;									//gui 리소스가 담긴 배열
-		
-		private var _animationModeOnButton:Image;
-		private var _animationModeOffButton:Image;
-		private var _imageModeOnButton:Image;
-		private var _imageModeOffButton:Image;
-		
-		private var _animationModeText:TextField;
-		private var _imageModeText:TextField;
-		
+//		
 		private var _spriteVector:Vector.<TextField> = new Vector.<TextField>;
 		
 		private var _addedSpriteSheetVector:Vector.<Image>;
@@ -70,7 +60,7 @@ package
 			_stageHeight = Screen.mainScreen.bounds.height;
 			_loadResource = new GUILoader(onLoadingComplete);
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onBack);
-			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
+			//addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 		}
 	
 		/**
@@ -90,21 +80,6 @@ package
 					break;
 			}
 		}
-
-		/**
-		 * 모든 터치 이벤트를 관장하는 이벤트 리스너 
-		 * @param event
-		 * 
-		 */
-		private function onAddedEvents(event:starling.events.Event):void
-		{
-			//trace(event.target);
-			_animationModeOnButton.addEventListener(TouchEvent.TOUCH, onTouchRadioAnimationModeOn);
-			_animationModeOffButton.addEventListener(TouchEvent.TOUCH, onTouchRadioAnimationModeOff);
-			
-			_imageModeOnButton.addEventListener(TouchEvent.TOUCH, onTouchRadioImageModeOn);
-			_imageModeOffButton.addEventListener(TouchEvent.TOUCH, onTouchRadioImageModeOff);
-		}
 		
 		/**
 		 * 모든 리소스의 로딩이 끝났는지를 검사하는 메소드
@@ -113,24 +88,18 @@ package
 		 */
 		private function onLoadingComplete():void
 		{	
-			
-			//얼마나 로딩됬는지를 나타냄
-//			if(_loadResource.imageDataArray.length / _loadResource.fileCount != 1)
-//				trace((_loadResource.imageDataArray.length / _loadResource.fileCount * 100).toFixed(1));
-//			else if(_loadResource.imageDataArray.length / _loadResource.fileCount == 1)
-//				trace("이미지 로딩 완료");
-//			else
-//				trace("이미지 로딩 실패");
-			
-			trace("배열길이 = " + _loadResource.imageDataArray.length);
-			trace("카운트 = " + _loadResource.fileCount);
 			//모두 로딩이 됬다면
 			if(_loadResource.imageDataArray.length == _loadResource.fileCount)
 			{	
 				moveToImage(_loadResource.imageDataArray);
-				init();
+				//init();
 				
-				trace(this.width + " " + this.height);
+				_modeChooser = new ModeChooser(_stageWidth, _stageHeight);
+				_modeChooser.init(_guiArray); 
+				_modeChooser.addEventListener("animationModeOn", onAnimationModeOn)
+				_modeChooser.addEventListener("imageModeOn", onImageModeOn)
+				addChild(_modeChooser);
+				
 				_spriteSheet = new SpriteSheet(_stageWidth, _stageHeight);
 				_spriteSheet.init(_guiArray);
 				_spriteSheet.addEventListener("selected", onSelectSpriteSheet);
@@ -165,171 +134,29 @@ package
 			for(var i:int = 0; i<loadedImageArray.length; ++i)
 			{				
 				var texture:Texture = Texture.fromBitmapData(loadedImageArray[i].bitmapData);
-				//_textureArray.push(texture);
 				
 				var image:Image = new Image(texture);				
 				image.name = loadedImageArray[i].name;
 				
 				_guiArray.push(image);
-				
 			}			
+		}
+		
+		private function onAnimationModeOn():void
+		{
+			_animationMode.visible = true;
+			_imageMode.visible = false;
 			
+			if(_animationMode.timer != null && _animationMode.timer.running)
+				onClickPauseButton();
 		}
 		
-		/**
-		 * 로드된 UI 객체들을 초기화 하는 메소드 
-		 * 
-		 */
-		private function init():void
+		private function onImageModeOn():void
 		{
-			//trace("init");
-			for(var i:int = 0; i<_guiArray.length; ++i)
-			{
-				switch(_guiArray[i].name)
-				{
-					case "radioButtonOff":
-						_animationModeOffButton = new Image(_guiArray[i].texture);
-						_animationModeOffButton.x = _stageWidth / 10 * 4.5;
-						_animationModeOffButton.y = _stageHeight / 10 * 6;						
-						_animationModeOffButton.width = _stageWidth / 10 / 2;
-						_animationModeOffButton.height = _animationModeOffButton.width;
-						_animationModeOffButton.alignPivot("center", "center");
-						_animationModeOffButton.visible = false;
-						addChild(_animationModeOffButton);
-						
-						_imageModeOffButton = new Image(_guiArray[i].texture);
-						_imageModeOffButton.x = _stageWidth / 10 * 4.5;
-						_imageModeOffButton.y = _stageHeight / 10 * 8;
-						_imageModeOffButton.width = _stageWidth / 10 / 2;
-						_imageModeOffButton.height = _imageModeOffButton.width;
-						_imageModeOffButton.alignPivot("center", "center");
-						_imageModeOffButton.visible = true;
-						addChild(_imageModeOffButton);						
-						break;
-					case "radioButtonOn":
-						_animationModeOnButton = new Image(_guiArray[i].texture);
-						_animationModeOnButton.x = _stageWidth / 10 * 4.5;
-						_animationModeOnButton.y = _stageHeight / 10 * 6;
-						_animationModeOnButton.width = _stageWidth / 10 / 2;
-						_animationModeOnButton.height = _animationModeOnButton.width;
-						_animationModeOnButton.alignPivot("center", "center");
-						_animationModeOnButton.visible = true;
-						addChild(_animationModeOnButton);
-						
-						_imageModeOnButton = new Image(_guiArray[i].texture);
-						_imageModeOnButton.x = _stageWidth / 10 * 4.5;
-						_imageModeOnButton.y = _stageHeight / 10 * 8;
-						_imageModeOnButton.width = _stageWidth / 10 / 2;
-						_imageModeOnButton.height = _imageModeOnButton.width;
-						_imageModeOnButton.alignPivot("center", "center");
-						_imageModeOnButton.visible = false;
-						addChild(_imageModeOnButton);
-						break;
-//					case "content":
-//						_content = new Image(_guiArray[i].texture);								
-//						_content.x = _stageWidth / 10 / 2;
-//						_content.y = _stageHeight / 10 / 2;
-//						_content.width = _stageWidth / 10 * 9;
-//						_content.height = _stageHeight / 10 * 5;
-//						addChild(_content);
-//						
-//						break;
-					
-				}
-			}
-			
-			_animationModeText = new TextField(_stageWidth / 10, _stageHeight / 10, "Animation Mode");
-			_animationModeText.format.size = 40;			
-			_animationModeText.x = _stageWidth / 10 * 4.5;
-			_animationModeText.y = _stageHeight / 10 * 6.75;			
-			_animationModeText.alignPivot("center", "center");
-			//_animationModeText.border = true;
-			addChild(_animationModeText);
-			
-			_imageModeText = new TextField(_stageWidth / 10, _stageHeight / 10, "Image Mode");
-			_imageModeText.format.size = 40;
-			_imageModeText.x = _stageWidth / 10 * 4.5;
-			_imageModeText.y = _stageHeight / 10 * 8.75;
-			_imageModeText.alignPivot("center", "center");
-			//_imageModeText.border = true;
-			addChild(_imageModeText);
-			
+			_animationMode.visible = false;
+			_imageMode.visible = true;
 		}
 		
-		/**
-		 * 
-		 * @param event 마우스가 버튼위에 올라오는 이벤트
-		 * 터치 (클릭)이 발생하면, 라디오 버튼의 이미지를 바꿔주는 콜백 메소드 (아래 4개 동일)
-		 */		
-		private function onTouchRadioAnimationModeOn(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_animationModeOnButton, TouchPhase.ENDED);
-			if(touch)
-			{
-				//trace("라디오 터치");
-				_animationModeOnButton.visible = true;
-				_animationModeOffButton.visible = false;
-				
-				_imageModeOnButton.visible = false;
-				_imageModeOffButton.visible = true;
-				
-				_animationMode.visible = true;
-				_imageMode.visible = false;
-			}
-		}
-		
-		private function onTouchRadioAnimationModeOff(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_animationModeOffButton, TouchPhase.ENDED);
-			if(touch)
-			{
-				_animationModeOnButton.visible = true;
-				_animationModeOffButton.visible = false;
-				
-				_imageModeOnButton.visible = false;
-				_imageModeOffButton.visible = true;
-				
-				_animationMode.visible = true;
-				_imageMode.visible = false;
-			}
-		}
-		
-		
-		private function onTouchRadioImageModeOn(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_imageModeOnButton, TouchPhase.ENDED);
-			if(touch)
-			{
-				_animationModeOnButton.visible = false;
-				_animationModeOffButton.visible = true;
-				
-				_imageModeOnButton.visible = true;
-				_imageModeOffButton.visible = false;
-				
-				_animationMode.visible = false;
-				_imageMode.visible = true;
-			}
-		}
-		
-		
-		private function onTouchRadioImageModeOff(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_imageModeOffButton, TouchPhase.ENDED);
-			if(touch)
-			{
-				_animationModeOnButton.visible = false;
-				_animationModeOffButton.visible = true;
-				
-				_imageModeOnButton.visible = true;
-				_imageModeOffButton.visible = false;
-				
-				_animationMode.visible = false;
-				_imageMode.visible = true;
-				
-				if(_animationMode.timer != null && _animationMode.timer.running)
-					onClickPauseButton();
-			}
-		}
 		
 		
 		/**
@@ -400,13 +227,9 @@ package
 					_imageMode.addChild(_imageMode.listSpr);
 				}
 			}
-			
-			
 			//_imageMode.spriteListVector.sort(FunctionMgr.compareName);
 			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 		}
-		
-	
 		
 		/**
 		 * 
@@ -502,7 +325,8 @@ package
 			{
 				_spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].splice(_animationMode.currentIndex - 1, 1);
 				_animationMode.nameTextField.text = "삭제됨";
-				_animationMode.currentIndex--;
+				//_animationMode.currentIndex--;
+				_animationMode.currentIndex = 0;
 			}
 		}
 		
@@ -582,7 +406,6 @@ package
 			var tempDic:Dictionary = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text];
 			
 			var tempVec:Vector.<ImageData> = _imageMode.addedImageVector;
-			//_addedSpriteSheetVector = _imageMode.addedImageVector;
 			
 			trace("---------tempVec---------");
 			for(var i:int = 0; i < tempVec.length; ++i)
@@ -593,7 +416,6 @@ package
 			
 			for(var key:String in tempDic)
 			{
-				//trace(tempDic[key].name);
 				var imageData:ImageData = new ImageData();
 				imageData.image = tempDic[key].image;
 				imageData.bitmapData = tempDic[key].bitmapData;
@@ -604,10 +426,6 @@ package
 				imageData.rect.height = tempDic[key].bitmapData.height;
 				tempVec.push(imageData);
 			}
-			
-			
-			
-			
 			
 			tempVec.sort(FunctionMgr.compareAreaDescending);
 			for(var i:int = 0; i < tempVec.length; ++i)
@@ -653,25 +471,14 @@ package
 			var texture:Texture = Texture.fromBitmapData(newBmd);			
 			var image:Image = new Image(texture);
 			
-			//_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text];
-			
-			//_spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text] ************ dispose 해야함
 			
 			var currentSpriteName:String = _spriteSheet.currentTextField.text;
 			
 			
 			_spriteSheet.sheetImageDicIMode[currentSpriteName] = _addedSpriteSheetDic;
 			
-//			for(var key:String in _spriteSheet.sheetImageDicAMode[currentSpriteName])
-//			{
-//				_spriteSheet.sheetImageDicAMode[currentSpriteName][key].dispose();
-//				_spriteSheet.sheetImageDicAMode[currentSpriteName][key] = null;
-//			}
-			//_spriteSheet.sheetImageDicAMode[currentSpriteName] = null;
-			
 			_spriteSheet.sheetImageDicAMode[currentSpriteName] = _addedSpriteSheetVector;
 			
-			//_spriteSheet.scaledSpriteSheetDic[_spriteSheet.currentTextField.text].visible = false;
 			var scaledSpriteSheet:Sprite = new Sprite();
 			image.width *= _stageWidth / 2500;
 			image.height *= _stageHeight / 2500;
