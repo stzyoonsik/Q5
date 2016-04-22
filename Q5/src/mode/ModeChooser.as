@@ -126,9 +126,6 @@ package mode
 				_imageModeOnButton.visible = false;
 				_imageModeOffButton.visible = true;
 				
-				//dispatchEvent(new Event("animationOn"));
-//				_animationMode.visible = true;
-//				_imageMode.visible = false;
 			}
 		}
 		
@@ -144,8 +141,6 @@ package mode
 				_imageModeOffButton.visible = true;
 				
 				dispatchEvent(new Event("animationModeOn"));
-//				_animationMode.visible = true;
-//				_imageMode.visible = false;
 			}
 		}
 		
@@ -160,9 +155,6 @@ package mode
 				
 				_imageModeOnButton.visible = true;
 				_imageModeOffButton.visible = false;
-				
-//				_animationMode.visible = false;
-//				_imageMode.visible = true;
 			}
 		}
 		
@@ -179,11 +171,6 @@ package mode
 				_imageModeOffButton.visible = false;
 				
 				dispatchEvent(new Event("imageModeOn"));
-//				_animationMode.visible = false;
-//				_imageMode.visible = true;
-//				
-//				if(_animationMode.timer != null && _animationMode.timer.running)
-//					onClickPauseButton();
 			}
 		}
 	}

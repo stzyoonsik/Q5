@@ -1,6 +1,7 @@
 package
 {
 	import flash.utils.Dictionary;
+	
 	import starling.display.Sprite;
 	
 	public class FunctionMgr
@@ -56,8 +57,6 @@ package
 		 */
 		public static function compareAreaDescending(a, b):int
 		{
-			//var aArea:int = a.imageData.height * a.imageData.width;
-			//var bArea:int = b.imageData.height * b.imageData.width;
 			var aArea:int = a.rect.height * a.rect.width;
 			var bArea:int = b.rect.height * b.rect.width;
 			
@@ -66,6 +65,22 @@ package
 				return -1; 
 			} 
 			else if (bArea > aArea) 
+			{ 
+				return 1; 
+			} 
+			else 
+			{ 
+				return 0; 
+			} 
+		}
+		
+		public static function compareNameAscending(a, b):int
+		{
+			if (b > a) 
+			{ 
+				return -1; 
+			} 
+			else if (b < a) 
 			{ 
 				return 1; 
 			} 
@@ -93,21 +108,16 @@ package
 			return newSize;
 		}
 		
-//		public static function compareName(a, b):int
-//		{
-//			
-//			if (b.name > a.name) 
-//			{ 
-//				return -1; 
-//			} 
-//			else if (b.name < a.name) 
-//			{ 
-//				return 1; 
-//			} 
-//			else 
-//			{ 
-//				return 0; 
-//			} 
-//		}
+		
+		public static function getRealName(sourceName:String):String
+		{
+			var name:String = sourceName;
+			
+			var slash:int = name.lastIndexOf("/");
+			var dot:int = name.lastIndexOf(".");
+			name = name.substring(slash + 1, dot);
+			
+			return name;
+		}
 	}
 }

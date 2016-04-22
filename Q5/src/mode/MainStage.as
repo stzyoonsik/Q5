@@ -6,7 +6,6 @@ package mode
 	import flash.desktop.NativeApplication;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.PNGEncoderOptions;
 	import flash.display.Screen;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
@@ -29,16 +28,12 @@ package mode
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
-	import starling.events.Event;
-	import starling.events.Touch;
-	import starling.events.TouchEvent;
-	import starling.events.TouchPhase;
 	import starling.text.TextField;
 	import starling.textures.Texture;
 	
 	public class MainStage extends Sprite
 	{
-		private var _YSExt:YoonsikExtension = new YoonsikExtension();
+		private var _YSExt:YoonsikExtension;
 		private var _vibeExt:Vibration = new Vibration(); 
 		private var _stageWidth:int;
 		private var _stageHeight:int;
@@ -51,7 +46,7 @@ package mode
 		private var _loadResource:GUILoader;
 		
 		private var _guiArray:Vector.<Image> = new Vector.<Image>;									//gui 리소스가 담긴 배열
-//		
+	
 		private var _spriteVector:Vector.<TextField> = new Vector.<TextField>;
 		
 		private var _addedSpriteSheetVector:Vector.<Image>;
@@ -59,12 +54,11 @@ package mode
 		
 		public function MainStage()
 		{
-			
+			_YSExt = new YoonsikExtension();
 			_stageWidth = Screen.mainScreen.bounds.width;
 			_stageHeight = Screen.mainScreen.bounds.height;
 			_loadResource = new GUILoader(onLoadingComplete);
 			NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onBack);
-			//addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 		}
 	
 		/**
@@ -96,19 +90,19 @@ package mode
 			if(_loadResource.imageDataArray.length == _loadResource.fileCount)
 			{	
 				moveToImage(_loadResource.imageDataArray);
-				//init();
+				
 				_exporter = new Exporter();
 				
 				_modeChooser = new ModeChooser(_stageWidth, _stageHeight);
 				_modeChooser.init(_guiArray); 
-				_modeChooser.addEventListener("animationModeOn", onAnimationModeOn)
-				_modeChooser.addEventListener("imageModeOn", onImageModeOn)
+				_modeChooser.addEventListener("animationModeOn", onClickAnimationModeOn)
+				_modeChooser.addEventListener("imageModeOn", onClickImageModeOn)
 				addChild(_modeChooser);
 				
 				_spriteSheet = new SpriteSheet(_stageWidth, _stageHeight);
 				_spriteSheet.init(_guiArray);
-				_spriteSheet.addEventListener("selected", onSelectSpriteSheet);
-				_spriteSheet.addEventListener("loaded", onSelectSpriteSheet);
+				_spriteSheet.addEventListener("selectSheet", onClickSheetSelectButton);
+				
 				addChild(_spriteSheet);
 				
 				_animationMode = new AnimationMode(_stageWidth, _stageHeight);
@@ -123,6 +117,7 @@ package mode
 				_imageMode.addEventListener("saveImage", onClickImageSaveButton);
 				_imageMode.addEventListener("saveSheet", onClickSheetSaveButton);
 				_imageMode.addEventListener("add", onAddImage);
+				_imageMode.addEventListener("selectImage", onClickImageSelectButton);
 				_imageMode.visible = false;
 				addChild(_imageMode);
 				
@@ -148,7 +143,7 @@ package mode
 			}			
 		}
 		
-		private function onAnimationModeOn():void
+		private function onClickAnimationModeOn():void
 		{
 			_animationMode.visible = true;
 			_imageMode.visible = false;
@@ -157,123 +152,12 @@ package mode
 				onClickPauseButton();
 		}
 		
-		private function onImageModeOn():void
+		private function onClickImageModeOn():void
 		{
 			_animationMode.visible = false;
 			_imageMode.visible = true;
 		}
 		
-		
-		
-		/**
-		 * 이미지모드 - 왼쪽에서 스프라이트시트를 선택하면 오른쪽에 안에 들어있는 이미지들을 순차적으로 담는 메소드 
-		 * 
-		 */		
-		private function onSelectSpriteSheet():void
-		{
-			trace("스프라이트 시트 선택함");
-			_imageMode.currentPage = 0;
-			_animationMode.currentIndex = 0;
-			
-			_imageMode.selectSpriteSheetButton.visible = true;
-			var dic:Dictionary = _spriteSheet.sheetImageDicIMode;
-			var pieceDic:Dictionary = dic[_spriteSheet.currentTextField.text];
-			
-			
-			//trace(pieceDic);
-			var setY:int;
-			var count:int;
-			var length:int = FunctionMgr.getDictionaryLength(pieceDic);
-			
-			_imageMode.spriteListVector = new Vector.<Sprite>;
-			_imageMode.listSpr = new Sprite();
-			_imageMode.listSpr.x = _stageWidth / 10 * 6.5;
-			_imageMode.listSpr.y = _stageHeight / 10 * 6.5;
-			_imageMode.listSpr.visible = false;
-			
-			for(var key:String in pieceDic)
-			{
-				count++;
-				
-				var textField:TextField = new TextField(_stageWidth / 10 * 1.5, _stageHeight / 10 / 2, pieceDic[key].name);
-				textField.format.size = 30;
-				textField.alignPivot("center", "center");
-				textField.y = setY;
-				
-				textField.border = true;
-				textField.name = pieceDic[key].name;
-				_spriteVector.push(textField);
-				
-				_imageMode.listSpr.addChild(textField);
-				
-				
-				if(count % 5 != 0)
-				{
-					setY += _stageHeight / 10 / 2;
-				}
-				else
-				{
-					_imageMode.listSpr.addEventListener(TouchEvent.TOUCH, onSelectSpriteList);
-					
-					_imageMode.spriteListVector.push(_imageMode.listSpr);
-					_imageMode.listSpr.visible = false;
-					_imageMode.addChild(_imageMode.listSpr);
-					_imageMode.listSpr = new Sprite();
-					_imageMode.listSpr.x = _stageWidth / 10 * 6.5;
-					_imageMode.listSpr.y = _stageHeight / 10 * 6.5;
-					
-					setY = 0;					
-				}
-				
-				if(count == length)
-				{
-					_imageMode.listSpr.addEventListener(TouchEvent.TOUCH, onSelectSpriteList);					
-					_imageMode.spriteListVector.push(_imageMode.listSpr);
-					_imageMode.listSpr.visible = false;
-					_imageMode.addChild(_imageMode.listSpr);
-				}
-			}
-			//_imageMode.spriteListVector.sort(FunctionMgr.compareName);
-			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
-		}
-		
-		/**
-		 * 
-		 * @param event 텍스트 필드 클릭
-		 * 이미지모드 - 텍스트 필드를 클릭하면 해당 이름의 이미지를 화면에 띄워주는 메소드 
-		 */
-		private function onSelectSpriteList(event:TouchEvent):void
-		{
-			//trace("리스트 클릭");
-			for(var i:int = 0; i<_spriteVector.length; ++i)
-			{
-				var touch:Touch = event.getTouch(_spriteVector[i], TouchPhase.ENDED);
-				if(touch)
-				{
-					
-					//trace(touch.target.name);
-					_imageMode.pieceImage.texture = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].image.texture;
-					_imageMode.pieceImage.width = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.width * _stageWidth / 1000;
-					_imageMode.pieceImage.height = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].rect.height * _stageHeight / 1000;
-					_imageMode.currentImageTextField.text =  _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][touch.target.name].name;
-					
-//					if(_imageMode.pieceImage.width > 400 || _imageMode.pieceImage.height > 400)
-//					{
-//						_imageMode.pieceImage.width /= 2;
-//						_imageMode.pieceImage.height /= 2;
-//						_imageMode.currentImageTextField.text += " (2배 축소)";
-//						trace("축소");
-//					}
-					
-					_YSExt.toast(_imageMode.currentImageTextField.text);
-					_vibeExt.vibrate(250);
-					
-					FunctionMgr.makeVisibleFalse(_imageMode.spriteListVector);
-					
-					_imageMode.makeArrowVisibleFalse();
-				}
-			}
-		}
 		
 		//플레이버튼 클릭 (dispatch된 콜백메소드)
 		private function onClickPlayButton():void
@@ -331,7 +215,6 @@ package mode
 			{
 				_spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].splice(_animationMode.currentIndex - 1, 1);
 				_animationMode.nameTextField.text = "삭제됨";
-				//_animationMode.currentIndex--;
 				_animationMode.currentIndex = 0;
 			}
 		}
@@ -351,15 +234,6 @@ package mode
 			_animationMode.pieceImage.width = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].width * _stageWidth / 1000;
 			_animationMode.pieceImage.height = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].height * _stageHeight / 1000;
 			_animationMode.nameTextField.text = _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text][_animationMode.currentIndex].name; 
-			
-//			if(_animationMode.pieceImage.width > _screenWidth / 10 * 2.5 || _animationMode.pieceImage.height > _screenHeight / 10 * 2.5)
-//			{
-//				_animationMode.pieceImage.width /= 2;
-//				_animationMode.pieceImage.height /= 2;
-//				_animationMode.nameTextField.text += " (2배 축소)";
-//				trace("축소");
-//			}
-			
 			
 			_animationMode.indexTextField.text = (_animationMode.currentIndex + 1).toString() + " / " + (_spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length ); 
 			_animationMode.currentIndex++;
@@ -419,7 +293,7 @@ package mode
 		}
 		
 		/**
-		 * 현재 보여지는 시트에 이미지를 maxrect packing하는 메소드 
+		 * 현재 보여지는 시트에 현재 이미지를 추가하여 maxrect packing하는 메소드 
 		 * 
 		 */
 		private function onAddImage():void
@@ -432,16 +306,17 @@ package mode
 			
 			var tempVec:Vector.<ImageData> = _imageMode.addedImageVector;
 			
+			var imageData:ImageData, i:int, key:String, rect:Rectangle;
 			trace("---------tempVec---------");
-			for(var i:int = 0; i < tempVec.length; ++i)
+			for(i = 0; i < tempVec.length; ++i)
 			{
 				_YSExt.toast(tempVec[i].name + " 추가");
 				trace(tempVec[i].name);	
 			}
 			
-			for(var key:String in tempDic)
+			for(key in tempDic)
 			{
-				var imageData:ImageData = new ImageData();
+				imageData = new ImageData();
 				imageData.image = tempDic[key].image;
 				imageData.bitmapData = tempDic[key].bitmapData;
 				imageData.name = tempDic[key].name;
@@ -452,17 +327,18 @@ package mode
 				tempVec.push(imageData);
 			}
 			
+			//패킹 시작
 			tempVec.sort(FunctionMgr.compareAreaDescending);
-			for(var i:int = 0; i < tempVec.length; ++i)
+			for(i = 0; i < tempVec.length; ++i)
 			{
-				var rect:Rectangle = maxRect.quickInsert(tempVec[i].bitmapData.width, tempVec[i].bitmapData.height); 
+				rect = maxRect.quickInsert(tempVec[i].bitmapData.width, tempVec[i].bitmapData.height); 
 				if(rect == null)
 				{
 					_YSExt.toast(tempVec[i].name + " 공간 부족");
 					continue;
 				}
 				
-				var imageData:ImageData = new ImageData();
+				imageData = new ImageData();
 				imageData.image = tempVec[i].image;
 				imageData.bitmapData = tempVec[i].bitmapData;
 				imageData.name = tempVec[i].name;
@@ -479,13 +355,13 @@ package mode
 			
 			var bmd:BitmapData = new BitmapData(1024, 1024);
 			
-			for(var key:String in _addedSpriteSheetDic)
+			for(key in _addedSpriteSheetDic)
 			{
 				var bitmap:Bitmap = new Bitmap(_addedSpriteSheetDic[key].bitmapData);
 				bitmap.x = _addedSpriteSheetDic[key].rect.x;
 				bitmap.y = _addedSpriteSheetDic[key].rect.y;
 				tempSpr.addChild(bitmap);
-				var rect:Rectangle = new Rectangle(0, 0, bitmap.bitmapData.width, bitmap.bitmapData.height);
+				rect = new Rectangle(0, 0, bitmap.bitmapData.width, bitmap.bitmapData.height);
 				bmd.merge(bitmap.bitmapData, rect, new Point(bitmap.x, bitmap.y), 0xFF, 0xFF, 0xFF, 0xFF);
 			}
 			
@@ -496,7 +372,7 @@ package mode
 			var texture:Texture = Texture.fromBitmapData(newBmd);			
 			var image:Image = new Image(texture);
 			
-			var imageData:ImageData = new ImageData();
+			imageData = new ImageData();
 			imageData.image = image;
 			imageData.bitmapData = newBmd;
 			imageData.rect = newBmd.rect;
@@ -505,23 +381,51 @@ package mode
 			_spriteSheet.spriteSheetDic[currentSheetName] = imageData;
 			_spriteSheet.sheetImageDicIMode[currentSheetName] = _addedSpriteSheetDic;			
 			_spriteSheet.sheetImageDicAMode[currentSheetName] = _addedSpriteSheetVector;
-			
-			var scaledSpriteSheet:Sprite = new Sprite();
-			image.width *= _stageWidth / 2500;
-			image.height *= _stageHeight / 2500;
-			scaledSpriteSheet.addChild(image);
-			
-			scaledSpriteSheet.x = _stageWidth / 10 * 2.5;
-			scaledSpriteSheet.y = _stageHeight / 10 * 3;
-			scaledSpriteSheet.alignPivot("center", "center");
-			
-			_spriteSheet.addChild(scaledSpriteSheet);
-			
-			_spriteSheet.scaledSpriteSheetDic[currentSheetName].visible = false;
-			_spriteSheet.scaledSpriteSheetDic[currentSheetName].dispose();
-			_spriteSheet.scaledSpriteSheetDic[currentSheetName] = scaledSpriteSheet;
+			_spriteSheet.currentSheetImage.texture = imageData.image.texture;			
 		}
 		
-	
+		// (이미지모드)이미지 선택 버튼 클릭
+		private function onClickImageSelectButton():void
+		{
+			var array:Array = new Array();
+			var tempDic:Dictionary = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text];
+			for(var key:String in tempDic)
+			{
+				array.push(tempDic[key].name);
+			}
+			array.sort(FunctionMgr.compareNameAscending);
+			_YSExt.selectImage(array, onImageSelected);
+		}
+		
+		//이미지가 선택되었다면 작동하는 콜백 메소드
+		private function onImageSelected(name:String):void
+		{
+			_imageMode.pieceImage.texture = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].image.texture;
+			_imageMode.pieceImage.width = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].rect.width * _stageWidth / 1000;
+			_imageMode.pieceImage.height = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].rect.height * _stageHeight / 1000;
+			_imageMode.currentImageTextField.text =  _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].name;
+		}
+		
+		//스프라이트시트 선택 버튼 클릭
+		private function onClickSheetSelectButton():void
+		{
+			var array:Array = new Array();
+			var tempDic:Dictionary = _spriteSheet.spriteSheetDic;
+			for(var key:String in tempDic)
+			{
+				array.push(tempDic[key].name);
+			}
+			array.sort(FunctionMgr.compareNameAscending);
+			_YSExt.selectImage(array, onSheetSelected);
+		}
+		
+		//이미지가 선택되었다면 작동하는 콜백 메소드
+		private function onSheetSelected(name:String):void
+		{	
+			_spriteSheet.currentSheetImage.texture = _spriteSheet.spriteSheetDic[name].image.texture;
+			_spriteSheet.currentSheetImage.width = _spriteSheet.spriteSheetDic[name].rect.width * _stageWidth / 2000;
+			_spriteSheet.currentSheetImage.height = _spriteSheet.spriteSheetDic[name].rect.height * _stageHeight / 2000;
+			_spriteSheet.currentTextField.text =  _spriteSheet.spriteSheetDic[name].name;
+		}
 	}
 }

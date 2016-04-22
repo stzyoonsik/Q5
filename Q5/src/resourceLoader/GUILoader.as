@@ -16,7 +16,6 @@ package resourceLoader
 		private var _completeFunc:Function;	
 		private var _urlArray:Vector.<String> = new Vector.<String>;					//파일명이 담긴 배열
 		private var _imageDataArray:Vector.<ImageData> = new Vector.<ImageData>;			//ImageData가 담긴 배열 
-		//private var array:Vector.<String> = new Vector.<String>;
 		private var _fileCount:int;
 		
 		public function get imageDataArray():Vector.<ImageData>
@@ -46,9 +45,6 @@ package resourceLoader
 			_completeFunc = cFunc;
 			
 			var array:Array = new Array();
-//			getResource();			
-//			countImageFile(array);
-//			buildLoader();
 			array = getResource();
 			countImageFile(array);
 			buildLoader();
@@ -67,9 +63,10 @@ package resourceLoader
 			var loaderInfo:LoaderInfo = LoaderInfo(event.target);
 			
 			var name:String = loaderInfo.url;
-			var slash:int = name.lastIndexOf("/");
-			var dot:int = name.lastIndexOf(".");
-			name = name.substring(slash + 1, dot);			
+//			var slash:int = name.lastIndexOf("/");
+//			var dot:int = name.lastIndexOf(".");
+//			name = name.substring(slash + 1, dot);
+			name = FunctionMgr.getRealName(name);
 			
 			var imageData:ImageData = new ImageData();
 			imageData.name = name;

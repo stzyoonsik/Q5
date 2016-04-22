@@ -35,8 +35,8 @@
         </excludedEntries>
       </libraryPathEntry>
       <libraryPathEntry kind="3" linkType="1" path="C:/Users/user/Downloads/starling-2.0/starling/bin/starling.swc" useDefaultLinkType="false"/>
-      <libraryPathEntry kind="5" linkType="2" path="YoonsikExtension.ane"/>
       <libraryPathEntry kind="5" linkType="2" path="com.adobe.extensions.Vibration.ane"/>
+      <libraryPathEntry kind="5" linkType="2" path="YoonsikExtension.ane"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
@@ -55,8 +55,8 @@
       <airSettings airCertificatePath="C:/Users/user/Desktop/yoonsik.p12" airTimestamp="true" anePathSet="true" version="1">
         <airExcludes/>
         <anePaths>
-          <anePathEntry path="YoonsikExtension.ane"/>
           <anePathEntry path="com.adobe.extensions.Vibration.ane"/>
+          <anePathEntry path="YoonsikExtension.ane"/>
         </anePaths>
         <newLaunchParams/>
         <modifiedLaunchParams/>

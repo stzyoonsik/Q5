@@ -23,7 +23,7 @@ package mode
 		private var _imageVector:Vector.<Image> = new Vector.<Image>;
 		
 		private var _delay:uint = 100;
-		private var _timer:Timer;
+		private var _timer:Timer = new Timer(0, 0);
 		
 		private var _nameTextField:TextField;												//현재 재생중인 애니메이션의 이미지의 이름을 알려주는 텍스트필드
 		private var _indexTextField:TextField;

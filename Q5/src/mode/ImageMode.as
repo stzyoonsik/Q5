@@ -9,7 +9,6 @@ package mode
 	import flash.filesystem.File;
 	import flash.net.URLRequest;
 	
-	import packer.MaxRectPacker;
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -25,13 +24,9 @@ package mode
 		private var _addButton:Sprite = new Sprite();
 		private var _imageSaveButton:Sprite = new Sprite();
 		private var _sheetSaveButton:Sprite = new Sprite();
-		private var _arrowUp:Image;
-		private var _arrowDown:Image;
 		private var _currentPage:int;
-		private var _pieceImage:Image = new Image(null);									//화면에 보여주기 용 스프라이트
-		private var _spriteListVector:Vector.<Sprite>;										//스프라이트시트 텍스트필드를 담는 배열									
-		private var _listSpr:Sprite = new Sprite();											//우측 하단 상하화살표버튼을 누르면 열리는 리스트
-		private var _selectSpriteSheetButton:Image;											//상하화살표버튼
+		private var _pieceImage:Image = new Image(null);									//화면에 보여주기 용 스프라이트			
+		private var _selectButton:Image;											//상하화살표버튼
 		private var _currentImageTextField:TextField;										//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
 		
 		private var _stageWidth:int;
@@ -61,12 +56,12 @@ package mode
 
 		public function get selectSpriteSheetButton():Image
 		{
-			return _selectSpriteSheetButton;
+			return _selectButton;
 		}
 
 		public function set selectSpriteSheetButton(value:Image):void
 		{
-			_selectSpriteSheetButton = value;
+			_selectButton = value;
 		}
 
 		public function get currentImageTextField():TextField
@@ -98,26 +93,7 @@ package mode
 		{
 			_pieceImage = value;
 		}
-		
-		public function get listSpr():Sprite
-		{
-			return _listSpr;
-		}
-		
-		public function set listSpr(value:Sprite):void
-		{
-			_listSpr = value;
-		}
-		
-		public function get spriteListVector():Vector.<Sprite>
-		{
-			return _spriteListVector;
-		}
-		
-		public function set spriteListVector(value:Vector.<Sprite>):void
-		{
-			_spriteListVector = value;
-		}
+
 		
 		public function init(guiArray:Vector.<Image>):void
 		{
@@ -128,36 +104,14 @@ package mode
 				{
 					
 					case "selectButton":
-						_selectSpriteSheetButton = new Image(guiArray[i].texture);
-						_selectSpriteSheetButton.x = _stageWidth / 10 * 7.5;
-						_selectSpriteSheetButton.y = _stageHeight / 10 * 6;
-						_selectSpriteSheetButton.width = _stageWidth / 10 / 3;
-						_selectSpriteSheetButton.height = _selectSpriteSheetButton.width;
-						_selectSpriteSheetButton.alignPivot("center", "center");
-						_selectSpriteSheetButton.visible = false;
-						addChild(_selectSpriteSheetButton);						
-						break;
-					
-					case "arrowUp":
-						_arrowUp = new Image(guiArray[i].texture);
-						_arrowUp.x = _stageWidth / 10 * 7.5;
-						_arrowUp.y = _stageHeight / 10 * 7.5;
-						_arrowUp.width = _stageWidth / 10 / 3;
-						_arrowUp.height = _arrowUp.width;
-						_arrowUp.alignPivot("center", "center");
-						_arrowUp.visible = false;
-						addChild(_arrowUp);
-						break;
-					
-					case "arrowDown":
-						_arrowDown = new Image(guiArray[i].texture);
-						_arrowDown.x = _stageWidth / 10 * 7.5;
-						_arrowDown.y = _stageHeight / 10 * 8.5;
-						_arrowDown.width = _stageWidth / 10 / 3;
-						_arrowDown.height = _arrowDown.width;
-						_arrowDown.alignPivot("center", "center");
-						_arrowDown.visible = false;
-						addChild(_arrowDown);
+						_selectButton = new Image(guiArray[i].texture);
+						_selectButton.x = _stageWidth / 10 * 6.5;
+						_selectButton.y = _stageHeight / 10 * 7;
+						_selectButton.width = _stageWidth / 10 ;
+						_selectButton.height = _selectButton.width;
+						_selectButton.alignPivot("center", "center");
+						
+						addChild(_selectButton);						
 						break;
 					
 					case "sheetSaveButton":
@@ -199,9 +153,9 @@ package mode
 			}
 			_currentImageTextField = new TextField(_stageWidth / 10, _stageHeight / 10, "");
 			_currentImageTextField.format.bold = true;
-			_currentImageTextField.format.size = 30;
-			_currentImageTextField.x = _stageWidth / 10 * 6.5;
-			_currentImageTextField.y = _stageHeight / 10 * 6;
+			_currentImageTextField.format.size = 50;
+			_currentImageTextField.x = _stageWidth / 10 * 7.5;
+			_currentImageTextField.y = _stageHeight / 10 * 5;
 			_currentImageTextField.alignPivot("center", "center");
 			addChild(_currentImageTextField);
 			
@@ -213,7 +167,6 @@ package mode
 			_pieceImage.y = _stageHeight / 10 * 3;	
 			
 			addChild(_pieceImage);
-			addChild(_listSpr);
 		}
 		
 		/**
@@ -223,55 +176,13 @@ package mode
 		 */
 		private function onAddedEvents(event:starling.events.Event):void
 		{				
-			_selectSpriteSheetButton.addEventListener(TouchEvent.TOUCH, onClickSpriteListButton);
-			_arrowUp.addEventListener(TouchEvent.TOUCH, onClickArrowUp);
-			_arrowDown.addEventListener(TouchEvent.TOUCH, onClickArrowDown);
+			_selectButton.addEventListener(TouchEvent.TOUCH, onClickSpriteListButton);
 			_imageSaveButton.addEventListener(TouchEvent.TOUCH, onClickImageSaveButton);
 			_sheetSaveButton.addEventListener(TouchEvent.TOUCH, onClickSheetSaveButton);
 			_addButton.addEventListener(TouchEvent.TOUCH, onClickAddButton);
 		}
 		
-		/**
-		 * 
-		 * @param event ↑ 버튼 클릭
-		 * 페이지를 내리고 현재 페이지에 해당하는 스프라이트 리스트를 보여줌
-		 */
-		private function onClickArrowUp(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_arrowUp, TouchPhase.ENDED);
-			if(touch)
-			{
-				if(_currentPage > 0)
-					_currentPage--;
-				
-				trace("UP");
-				trace(_currentPage);
-				FunctionMgr.makeVisibleFalse(_spriteListVector);
-				_spriteListVector[_currentPage].visible = true;
-			}
-			
-		}
-		
-		/**
-		 * 
-		 * @param event ↓ 버튼 클릭
-		 * 페이지를 올리고 현재 페이지에 해당하는 스프라이트 리스트를 보여줌
-		 */
-		private function onClickArrowDown(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_arrowDown, TouchPhase.ENDED);
-			if(touch)
-			{
-				if(_currentPage < _spriteListVector.length -1)
-					_currentPage++;
-								
-				trace("DOWN");
-				trace(_currentPage);
-				FunctionMgr.makeVisibleFalse(_spriteListVector);
-				spriteListVector[currentPage].visible = true;
-			}
-			
-		}
+
 		
 		/**
 		 * 
@@ -280,28 +191,20 @@ package mode
 		 */
 		private function onClickSpriteListButton(event:TouchEvent):void
 		{
-			var touch:Touch = event.getTouch(_selectSpriteSheetButton, TouchPhase.ENDED);
+			var touch:Touch = event.getTouch(_selectButton, TouchPhase.ENDED);
 			if(touch)
 			{
-				_arrowUp.visible = true;
-				_arrowDown.visible = true;
-				
-				if(_spriteListVector[_currentPage] != null)
-					_spriteListVector[_currentPage].visible = true;
+				dispatchEvent(new Event("selectImage"));
 			}
 		}
 		
+
+		
 		/**
 		 * 
-		 * 
-		 * 화면에 보이는 스프라이트 리스트 화살표 버튼을 안보이게 하는 메소드
+		 * @param event 클릭
+		 * 현재 보여지는 이미지를 저장하는 콜백 메소드
 		 */
-		public function makeArrowVisibleFalse():void
-		{
-			_arrowUp.visible = false;
-			_arrowDown.visible = false;
-		}
-		
 		private function onClickImageSaveButton(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_imageSaveButton, TouchPhase.BEGAN);
@@ -319,6 +222,11 @@ package mode
 			}
 		}
 		
+		/**
+		 * 
+		 * @param event 클릭
+		 * 현재 보여지는 시트를 저장하는 콜백 메소드
+		 */
 		private function onClickSheetSaveButton(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_sheetSaveButton, TouchPhase.BEGAN);
@@ -336,6 +244,11 @@ package mode
 			}
 		}
 		
+		/**
+		 * 
+		 * @param event 클릭
+		 * 현재 스프라이트시트에 현재 이미지를 추가하는 콜백메소드
+		 */
 		private function onClickAddButton(event:TouchEvent):void
 		{
 			
@@ -385,9 +298,11 @@ package mode
 			
 			
 			var name:String = loaderInfo.url;
-			var slash:int = name.lastIndexOf("/");
-			var dot:int = name.lastIndexOf(".");
-			name = name.substring(slash + 1, dot);		
+//			var slash:int = name.lastIndexOf("/");
+//			var dot:int = name.lastIndexOf(".");
+//			name = name.substring(slash + 1, dot);
+			name = FunctionMgr.getRealName(name);
+			
 			imageData.name = name;
 			imageData.image = image;
 			imageData.bitmapData = bitmap.bitmapData;

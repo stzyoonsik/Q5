@@ -24,22 +24,16 @@ package resourceLoader
 	public class SpriteSheet extends Sprite
 	{
 		private var _loadSpriteSheetsButton:Sprite = new Sprite();							//애니메이션모드, 이미지모드에서 공유됨. 스프라이트시트를 로드하는 버튼
-		private var _selectSpriteSheetButton:Sprite = new Sprite();											//화살표버튼
-		
-		private var _spriteSheetList:Sprite = new Sprite();									//스프라이트시트 텍스트필드 를 담는 Sprite		
-		private var _spriteSheetVector:Vector.<TextField> = new Vector.<TextField>;			//스프라이트시트 텍스트필드를 담는 배열
+		private var _selectSpriteSheetButton:Sprite = new Sprite();							//셀렉트버튼
 		
 		private var _xmlDic:Dictionary = new Dictionary();
-		
 		private var _spriteSheetDic:Dictionary = new Dictionary();							//사용자가 Load SpriteSheets 버튼을 통해 스프라이트시트를 로드하면 이 딕셔너리에 추가됨
-		private var _scaledSpriteSheetDic:Dictionary = new Dictionary();					//위와 같지만 이미지 크기를 1/4로 줄인 이미지가 담긴 딕셔너리		
 		
 		private var _pieceImageVectorAMode:Vector.<Image>;									//조각난 이미지들을 담는 배열		- 애니메이션모드용
 		private var _sheetImageDicAMode:Dictionary = new Dictionary();
 		
 		private var _pieceImageDicIMode:Dictionary;								 			//조각난 이미지들을 담는 딕셔너리	- 이미지모드용
 		private var _sheetImageDicIMode:Dictionary = new Dictionary();
-		//private var _spriteSheetDicIModeForSave:Dictionary = new Dictionary();
 		
 		private var _numberOfPNG:int;
 		private var _numberOfXML:int;
@@ -48,6 +42,7 @@ package resourceLoader
 		private var _stageHeight:int;
 	
 		private var _currentTextField:TextField;											//현재 선택된 스프라이트 시트를 나타내기 위한 텍스트필드
+		private var _currentSheetImage:Image = new Image(null);
 		
 		public function SpriteSheet(stageWidth:int, stageHeight:int)
 		{		
@@ -55,26 +50,16 @@ package resourceLoader
 			_stageHeight = stageHeight;
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 		}
-//
-//		public function get loadSpriteSheetsButton():Image
-//		{
-//			return _loadSpriteSheetsButton;
-//		}
-//
-//		public function set loadSpriteSheetsButton(value:Image):void
-//		{
-//			_loadSpriteSheetsButton = value;
-//		}
 
-//		public function get addedSpriteSheet():Sprite
-//		{
-//			return _addedSpriteSheet;
-//		}
-//
-//		public function set addedSpriteSheet(value:Sprite):void
-//		{
-//			_addedSpriteSheet = value;
-//		}
+		public function get currentSheetImage():Image
+		{
+			return _currentSheetImage;
+		}
+
+		public function set currentSheetImage(value:Image):void
+		{
+			_currentSheetImage = value;
+		}
 
 		public function get spriteSheetDic():Dictionary
 		{
@@ -84,16 +69,6 @@ package resourceLoader
 		public function set spriteSheetDic(value:Dictionary):void
 		{
 			_spriteSheetDic = value;
-		}
-
-		public function get scaledSpriteSheetDic():Dictionary
-		{
-			return _scaledSpriteSheetDic;
-		}
-
-		public function set scaledSpriteSheetDic(value:Dictionary):void
-		{
-			_scaledSpriteSheetDic = value;
 		}
 
 		public function get pieceImageVectorAMode():Vector.<Image>
@@ -186,21 +161,30 @@ package resourceLoader
 			}
 			
 			_currentTextField = new TextField(_stageWidth / 10 * 2.5, _stageHeight / 10 / 2, "");
-			_currentTextField.format.size = 30;
+			_currentTextField.format.size = 50;
 			_currentTextField.format.bold = true;
 			_currentTextField.x = _stageWidth / 10 * 2;
 			_currentTextField.y = _stageHeight / 10 * 7.5;
 			_currentTextField.alignPivot("center", "center");
 			_currentTextField.border = true;
-			
 			addChild(_currentTextField);
+			
+			_currentSheetImage.texture = null;
+			_currentSheetImage.width = 0;
+			_currentSheetImage.height = 0;
+			_currentSheetImage.alignPivot("center", "center");
+			_currentSheetImage.x = _stageWidth / 10 * 2.5;
+			_currentSheetImage.y = _stageHeight / 10 * 3;	
+			
+			addChild(_currentSheetImage);
 		
 		}
 		
 		private function onAddedEvents(event:starling.events.Event):void
 		{		
 			_loadSpriteSheetsButton.addEventListener(TouchEvent.TOUCH, onLoadSpriteSheetsButton);	
-			_selectSpriteSheetButton.addEventListener(TouchEvent.TOUCH, onSelectSpriteSheetButton);
+			_selectSpriteSheetButton.addEventListener(TouchEvent.TOUCH, onClickSheetSelectButton);
+			
 		}
 		
 		
@@ -209,12 +193,12 @@ package resourceLoader
 		 * @param event 클릭
 		 * 화살표 버튼을 클릭하면 드롭다운을 보여주는 이벤트리스너
 		 */
-		private function onSelectSpriteSheetButton(event:TouchEvent):void
+		private function onClickSheetSelectButton(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(_selectSpriteSheetButton, TouchPhase.ENDED);
 			if(touch)
 			{
-				_spriteSheetList.visible = true;
+				dispatchEvent(new Event("selectSheet"));
 			}
 		}
 		
@@ -229,7 +213,6 @@ package resourceLoader
 			var touch:Touch = event.getTouch(_loadSpriteSheetsButton, TouchPhase.BEGAN);
 			if(touch)
 			{
-				
 				_loadSpriteSheetsButton.scale = 0.8;
 			}
 			
@@ -262,8 +245,7 @@ package resourceLoader
 				var loader:Loader = new Loader();				
 				loader.load(new URLRequest(event.files[i].url));				
 				loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoaderComplete);				
-				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaderFailed);
-				
+				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaderFailed);				
 				
 				//XML 로드
 				var xmlURL:String = FunctionMgr.replaceExtensionPngToXml(event.files[i].url);
@@ -281,8 +263,12 @@ package resourceLoader
 		 */
 		private function completeAll():void
 		{
-			if(_numberOfPNG == _spriteSheetVector.length && _numberOfXML == FunctionMgr.getDictionaryLength(_xmlDic))
+			if(_numberOfPNG == FunctionMgr.getDictionaryLength(_spriteSheetDic) && _numberOfXML == FunctionMgr.getDictionaryLength(_xmlDic))
 			{
+				_currentSheetImage.texture = _spriteSheetDic[_currentTextField.text].image.texture;
+				_currentSheetImage.width = _spriteSheetDic[_currentTextField.text].rect.width * _stageWidth / 2500;
+				_currentSheetImage.height = _spriteSheetDic[_currentTextField.text].rect.height * _stageHeight / 2500;
+				
 				readXML();
 			}
 		}
@@ -341,19 +327,14 @@ package resourceLoader
 				
 				_sheetImageDicIMode[key] = _pieceImageDicIMode;
 				_sheetImageDicAMode[key] = _pieceImageVectorAMode;
-		
 			}
-			
-			dispatchEvent(new Event("loaded"));
-			
-			
 		}
 		
 		
 		/**
 		 * 
 		 * @param event 완료
-		 * 해당 파일의 로딩이 완료되면, image 로 형변환하여 배열에 저장하고, 보여주기용 배열에 스케일링하여 저장하는 이벤트 리스너
+		 * 해당 파일의 로딩이 완료되면, imageData 형태로 저장하는  이벤트 리스너
 		 */
 		private function onLoaderComplete(event:flash.events.Event):void
 		{
@@ -367,39 +348,19 @@ package resourceLoader
 			var texture:Texture = Texture.fromBitmap(bitmap);			
 			var image:Image = new Image(texture);
 			
+			//이름 따오기
+			var name:String = loaderInfo.url;
+			name = FunctionMgr.getRealName(name);	
+			
 			var imageData:ImageData = new ImageData();
 			imageData.image = image;
 			imageData.bitmapData = bitmap.bitmapData;
 			imageData.rect = bitmap.bitmapData.rect;
-			//이름 따오기
-			var name:String = loaderInfo.url;
-			var slash:int = name.lastIndexOf("/");
-			var dot:int = name.lastIndexOf(".");
-			name = name.substring(slash + 1, dot);		
-			
+			imageData.name = name;
 			//원본 스프라이트시트 딕셔너리에 추가
+			_currentTextField.text = name;
+			_currentTextField.name = name;
 			_spriteSheetDic[name] = imageData;
-			
-			//보여주기용 스프라이트시트 세팅
-			//image.scale = 0.25;
-			var scaledSpriteSheet:Sprite = new Sprite();
-			image.width *= _stageWidth / 2500;
-			image.height *= _stageHeight / 2500;
-			scaledSpriteSheet.addChild(image);
-			
-			scaledSpriteSheet.x = _stageWidth / 10 * 2.5;
-			scaledSpriteSheet.y = _stageHeight / 10 * 3;
-			scaledSpriteSheet.alignPivot("center", "center");
-			scaledSpriteSheet.visible = false;
-			
-			//딕셔너리에 추가
-			_scaledSpriteSheetDic[name] = scaledSpriteSheet;
-			
-			
-			addChild(scaledSpriteSheet);			
-			
-			
-			setSpriteSheetTextField(name);
 			
 			loaderInfo.removeEventListener(flash.events.Event.COMPLETE, onLoaderComplete);
 			completeAll();
@@ -409,82 +370,5 @@ package resourceLoader
 		{
 			trace("로드 실패 " + event);			
 		}
-		
-	
-		/**
-		 * 
-		 * @param name 이미지 파일(스프라이트시트.png)의 이름
-		 * 텍스트 필드를 세팅하는 메소드
-		 */
-		private function setSpriteSheetTextField(name:String):void
-		{
-			var _spriteSheetTextField:TextField;
-			_spriteSheetTextField = new TextField(_stageWidth / 10 * 2.5, _stageHeight / 10 / 2, "");
-			
-			_spriteSheetTextField.text = name;
-			_spriteSheetTextField.name = name;
-			_spriteSheetTextField.border = true;
-			
-			_spriteSheetVector.push(_spriteSheetTextField);
-			
-			if(_numberOfPNG == _spriteSheetVector.length)
-			{
-				for(var i:int = 0; i < _spriteSheetVector.length; ++i)
-				{					
-					_spriteSheetVector[i].format.size = 30;
-					_spriteSheetVector[i].x = _stageWidth / 10 * 2;
-					_spriteSheetVector[i].y = (_stageHeight / 10 * 7.5) + (_stageHeight / 10 / 2) + (i * _stageHeight / 10 / 2);//624 + (i * 24);
-					_spriteSheetVector[i].alignPivot("center", "center");
-					_spriteSheetList.visible = false;
-					_spriteSheetList.addChild(_spriteSheetVector[i]);
-					if(i == _spriteSheetVector.length - 1)
-					{
-						_currentTextField.text = _spriteSheetVector[i].name;
-						_currentTextField.name = _spriteSheetVector[i].name;
-					
-						_scaledSpriteSheetDic[_currentTextField.text].visible = true;
-					}
-				}
-				
-				_spriteSheetList.addEventListener(TouchEvent.TOUCH, onSelectSpriteSheetList);
-				addChild(_spriteSheetList);
-				
-				
-			}
-		}
-		
-
-		
-		/**
-		 * 
-		 * @param event 클릭
-		 * 스프라이트시트 리스트 중 하나를 클릭했을때 발생하는 이벤트 리스너
-		 */
-		private function onSelectSpriteSheetList(event:TouchEvent):void
-		{
-			for(var i:int = 0; i<_spriteSheetVector.length; ++i)
-			{
-				var touch:Touch = event.getTouch(_spriteSheetVector[i], TouchPhase.ENDED);
-				if(touch)
-				{
-					trace(touch.target.name);
-					_currentTextField.text = touch.target.name;
-					_spriteSheetList.visible = false;
-					
-					//딕셔너리를 순회하여 모든 작은이미지들의 visible을 끄고, 선택된 이미지의 visible만 true로 함
-					for(var key:String in _scaledSpriteSheetDic)
-					{
-						_scaledSpriteSheetDic[key].visible = false;
-					}
-					_scaledSpriteSheetDic[_currentTextField.text].visible = true;	
-					
-					dispatchEvent(new Event("selected"));
-					
-				}
-			}			
-			
-		}
-		
-		
 	}
 }
