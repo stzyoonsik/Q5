@@ -138,6 +138,8 @@ package mode
 				image.name = loadedImageArray[i].name;
 				
 				_guiArray.push(image);
+				image.dispose();
+				image = null;
 			}			
 		}
 		
@@ -156,6 +158,39 @@ package mode
 			_imageMode.visible = true;
 		}
 		
+		//스프라이트시트 선택 버튼 클릭
+		private function onClickSheetSelectButton():void
+		{			
+			var array:Array = new Array();
+			var tempDic:Dictionary = _spriteSheet.spriteSheetDic;
+			for(var key:String in tempDic)
+			{
+				array.push(tempDic[key].name);
+			}
+			array.sort(FunctionMgr.compareAscending);
+			_YSExt.selectImage(array, onSheetSelected);
+			array = null;
+		}
+		
+		//이미지가 선택되었다면 작동하는 콜백 메소드
+		private function onSheetSelected(name:String):void
+		{	
+			_animationMode.currentIndex = 0;
+			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
+			
+			_spriteSheet.currentSheetImage.texture = _spriteSheet.spriteSheetDic[name].image.texture;
+			_spriteSheet.currentSheetImage.width = _spriteSheet.spriteSheetDic[name].rect.width * _stageWidth / 2500;
+			_spriteSheet.currentSheetImage.height = _spriteSheet.spriteSheetDic[name].rect.height * _stageHeight / 2500;
+			_spriteSheet.currentTextField.text =  _spriteSheet.spriteSheetDic[name].name;
+		}
+		
+		//로드스프라이트시트 버튼을 누르면 애니메이션 모드의 현재 인덱스와 타이머를 재할당함
+		private function onLoadSheet():void
+		{
+			_animationMode.currentIndex = 0;
+			_animationMode.timer = null;
+			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
+		}
 		
 		//플레이버튼 클릭 (dispatch된 콜백메소드)
 		private function onClickPlayButton():void
@@ -174,6 +209,7 @@ package mode
 				_YSExt.toast("이미 재생중입니다.");
 				return;
 			}
+			_animationMode.timer = null;
 			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 						
 			_animationMode.timer.addEventListener(TimerEvent.TIMER, onTimerStart);
@@ -271,6 +307,7 @@ package mode
 			fileStream.open(pngFile, FileMode.WRITE);
 			fileStream.writeBytes(byteArray);
 			fileStream.close();
+			fileStream = null;
 			
 			_YSExt.toast(_imageMode.currentImageTextField.text + ".png 저장 완료");
 		}
@@ -322,6 +359,8 @@ package mode
 				imageData.rect.width = tempDic[key].bitmapData.width;
 				imageData.rect.height = tempDic[key].bitmapData.height;
 				tempVec.push(imageData);
+				
+				imageData = null;
 			}
 			
 			//패킹 시작
@@ -346,6 +385,7 @@ package mode
 				_addedSpriteSheetDic[imageData.name] = imageData;
 				_addedSpriteSheetVector.push(imageData.image);
 				
+				imageData = null;				
 			}
 			
 			var tempSpr:flash.display.Sprite = new flash.display.Sprite();
@@ -359,7 +399,9 @@ package mode
 				bitmap.y = _addedSpriteSheetDic[key].rect.y;
 				tempSpr.addChild(bitmap);
 				rect = new Rectangle(0, 0, bitmap.bitmapData.width, bitmap.bitmapData.height);
-				bmd.merge(bitmap.bitmapData, rect, new Point(bitmap.x, bitmap.y), 0xFF, 0xFF, 0xFF, 0xFF);
+				//bmd.merge(bitmap.bitmapData, rect, new Point(bitmap.x, bitmap.y), 0xFF, 0xFF, 0xFF, 0xFF);
+				bmd.copyPixels(bitmap.bitmapData, rect, new Point(bitmap.x, bitmap.y));
+				rect = null;
 			}
 			
 			var rt:Rectangle = new Rectangle(0, 0, FunctionMgr.getCorrectLength(tempSpr.width), FunctionMgr.getCorrectLength(tempSpr.height));
@@ -378,7 +420,15 @@ package mode
 			_spriteSheet.spriteSheetDic[currentSheetName] = imageData;
 			_spriteSheet.sheetImageDicIMode[currentSheetName] = _addedSpriteSheetDic;			
 			_spriteSheet.sheetImageDicAMode[currentSheetName] = _addedSpriteSheetVector;
-			_spriteSheet.currentSheetImage.texture = imageData.image.texture;			
+			_spriteSheet.currentSheetImage.texture = imageData.image.texture;	
+			
+			_addedSpriteSheetVector = null;
+			maxRect = null; 
+			tempSpr = null;
+			bmd.dispose(); bmd = null;
+			rt = null;
+			//newBmd.dispose(); newBmd = null;
+			image.dispose(); image = null;			
 		}
 		
 		// (이미지모드)이미지 선택 버튼 클릭
@@ -392,6 +442,7 @@ package mode
 			}
 			array.sort(FunctionMgr.compareAscending);
 			_YSExt.selectImage(array, onImageSelected);
+			array = null;
 		}
 		
 		//이미지가 선택되었다면 작동하는 콜백 메소드
@@ -401,37 +452,6 @@ package mode
 			_imageMode.pieceImage.width = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].rect.width * _stageWidth / 1000;
 			_imageMode.pieceImage.height = _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].rect.height * _stageHeight / 1000;
 			_imageMode.currentImageTextField.text =  _spriteSheet.sheetImageDicIMode[_spriteSheet.currentTextField.text][name].name;
-		}
-		
-		//스프라이트시트 선택 버튼 클릭
-		private function onClickSheetSelectButton():void
-		{			
-			var array:Array = new Array();
-			var tempDic:Dictionary = _spriteSheet.spriteSheetDic;
-			for(var key:String in tempDic)
-			{
-				array.push(tempDic[key].name);
-			}
-			array.sort(FunctionMgr.compareAscending);
-			_YSExt.selectImage(array, onSheetSelected);
-		}
-		
-		//이미지가 선택되었다면 작동하는 콜백 메소드
-		private function onSheetSelected(name:String):void
-		{	
-			_animationMode.currentIndex = 0;
-			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
-			
-			_spriteSheet.currentSheetImage.texture = _spriteSheet.spriteSheetDic[name].image.texture;
-			_spriteSheet.currentSheetImage.width = _spriteSheet.spriteSheetDic[name].rect.width * _stageWidth / 2000;
-			_spriteSheet.currentSheetImage.height = _spriteSheet.spriteSheetDic[name].rect.height * _stageHeight / 2000;
-			_spriteSheet.currentTextField.text =  _spriteSheet.spriteSheetDic[name].name;
-		}
-		
-		private function onLoadSheet():void
-		{
-			_animationMode.currentIndex = 0;
-			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 		}
 	}
 }

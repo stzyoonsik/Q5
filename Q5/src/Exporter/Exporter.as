@@ -38,6 +38,7 @@ package exporter
 			fileStream.open(_pngFile, FileMode.WRITE);
 			fileStream.writeBytes(byteArray);
 			fileStream.close();
+			fileStream = null;
 		}		
 	
 		/**
@@ -60,8 +61,8 @@ package exporter
 					+ "\" y=\"" + dic[key].rect.y + "\" width=\"" + dic[key].rect.width + "\" height=\"" + dic[key].rect.height + "\"/>\n");				
 			}
 			fileStream.writeUTFBytes("</TextureAtlas>");
-			fileStream.close();
-			
+			fileStream.close();	
+			fileStream = null;
 		}
 	}
 }

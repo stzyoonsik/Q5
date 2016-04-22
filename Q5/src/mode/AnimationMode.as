@@ -78,7 +78,7 @@ package mode
 						_playButton.alignPivot("center", "center");
 						addChild(_playButton);	
 						break;
-					case "pauseButton":
+					case "pauseButton":						
 						image = new Image(guiArray[i].texture);
 						image.width = _stageWidth;
 						image.height = image.width;
@@ -145,7 +145,9 @@ package mode
 			_indexTextField.x = _stageWidth * 7.5;
 			_indexTextField.y = _stageHeight;
 			_indexTextField.alignPivot("center", "center");
-			addChild(_indexTextField);
+			addChild(_indexTextField);	
+			
+			image = null;
 		}
 		
 		private function onAddedEvents(event:starling.events.Event):void

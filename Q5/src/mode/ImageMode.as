@@ -25,7 +25,7 @@ package mode
 		private var _sheetSaveButton:Sprite = new Sprite();		
 		
 		private var _pieceImage:Image = new Image(null);									//화면에 보여주기 용 이미지			
-		private var _selectButton:Image;													//선택버튼
+		private var _selectButton:Sprite = new Sprite();													//선택버튼
 		private var _currentImageTextField:TextField;										//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
 				
 		private var _stageWidth:int;
@@ -45,8 +45,8 @@ package mode
 		public function get addedImageVector():Vector.<ImageData>{ return _addedImageVector; }
 		public function set addedImageVector(value:Vector.<ImageData>):void{ _addedImageVector = value; }
 
-		public function get selectSpriteSheetButton():Image{ return _selectButton; }
-		public function set selectSpriteSheetButton(value:Image):void{ _selectButton = value; }
+		public function get selectSpriteSheetButton():Sprite{ return _selectButton; }
+		public function set selectSpriteSheetButton(value:Sprite):void{ _selectButton = value; }
 
 		public function get currentImageTextField():TextField{ return _currentImageTextField; }		
 		public function set currentImageTextField(value:TextField):void{ _currentImageTextField = value; }		
@@ -63,13 +63,14 @@ package mode
 				switch(guiArray[i].name)
 				{					
 					case "selectButton":
-						_selectButton = new Image(guiArray[i].texture);
+						image = new Image(guiArray[i].texture);
+						image.width = _stageWidth;
+						image.height = image.width;
+						_selectButton.addChild(image);
+						
 						_selectButton.x = _stageWidth * 6.5;
 						_selectButton.y = _stageHeight * 7;
-						_selectButton.width = _stageWidth;
-						_selectButton.height = _selectButton.width;
-						_selectButton.alignPivot("center", "center");
-						
+						_selectButton.alignPivot("center", "center");						
 						addChild(_selectButton);						
 						break;
 					
@@ -126,6 +127,8 @@ package mode
 			_pieceImage.y = _stageHeight * 3;	
 			
 			addChild(_pieceImage);
+			
+			image = null;
 		}
 		
 		/**
@@ -250,6 +253,7 @@ package mode
 				loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onLoaderComplete);				
 				loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onLoaderFailed);
 				
+				loader = null;
 			}
 			_addedImageVector = new Vector.<ImageData>;
 		}
@@ -282,6 +286,10 @@ package mode
 			{
 				dispatchEvent(new Event("add"));
 			}
+			
+			image.dispose();
+			image = null;
+			imageData = null;
 		}
 		
 		private function onLoaderFailed(event:flash.events.Event):void

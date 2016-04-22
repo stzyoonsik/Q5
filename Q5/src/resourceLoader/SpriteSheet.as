@@ -126,8 +126,9 @@ package resourceLoader
 			_currentSheetImage.alignPivot("center", "center");
 			_currentSheetImage.x = _stageWidth * 2.5;
 			_currentSheetImage.y = _stageHeight * 3;				
-			addChild(_currentSheetImage);
-		
+			addChild(_currentSheetImage);		
+			
+			image = null;
 		}
 		
 		private function onAddedEvents(event:starling.events.Event):void
@@ -202,6 +203,10 @@ package resourceLoader
 				var urlLoader:URLLoader = new URLLoader();				
 				urlLoader.addEventListener(flash.events.Event.COMPLETE, onXMLLoaderComplete);
 				urlLoader.load(urlRequest);
+				
+				loader = null;
+				urlRequest = null;
+				urlLoader = null;
 			}
 		}
 		
@@ -237,6 +242,8 @@ package resourceLoader
 			_xmlDic[name] = xml;
 			
 			completeAll();
+			
+			xml = null;
 		}
 		
 		/**
@@ -272,6 +279,11 @@ package resourceLoader
 					
 					_pieceImageVectorAMode.push(pieceImage);					
 					_pieceImageDicIMode[imageData.name] = imageData; 
+					
+					pieceImage.dispose();
+					pieceImage = null;
+					pt = null;
+					pieceBitmapData = null;
 				}
 				
 				_sheetImageDicIMode[key] = _pieceImageDicIMode;
@@ -315,6 +327,9 @@ package resourceLoader
 			
 			loaderInfo.removeEventListener(flash.events.Event.COMPLETE, onLoaderComplete);
 			completeAll();
+			
+			image.dispose(); image = null;
+			imageData = null;
 		}
 		
 		private function onLoaderFailed(event:flash.events.Event):void
