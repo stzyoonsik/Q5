@@ -1,3 +1,1 @@
-adt -package -target apk-captive-runtime -storetype pkcs12 -keystore C:\Users\user\Desktop\yoonsik.p12 Q5.apk Q5-app.xml Q5.swf arrowDown.png arrowUp.png deleteButton.png loadButton.png pauseButton.png playButton.png radioButtonOff.png radioButtonOn.png saveButton.png selectButton.png -extdir extensions
-
 adt -package -target apk-captive-runtime -storetype pkcs12 -keystore C:\Users\user\Desktop\yoonsik.p12 Q5.apk Q5-app.xml Q5.swf -C resources . -extdir extensions
