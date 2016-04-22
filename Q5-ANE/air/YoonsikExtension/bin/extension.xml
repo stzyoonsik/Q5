@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension xmlns="http://ns.adobe.com/air/extension/3.1">
+    <id>com.yoonsik.YoonsikExtension</id>
+    <versionNumber>1.0.0</versionNumber>
+    <platforms>
+        <platform name="Android-ARM">
+            <applicationDeployment>
+                <nativeLibrary>YoonsikExtension.jar</nativeLibrary>
+                <initializer>com.yoonsik.extensions.YoonsikExtension</initializer>
+                <finalizer>com.yoonsik.extensions.YoonsikExtension</finalizer>
+             </applicationDeployment>
+        </platform>
+    </platforms>
+</extension>
