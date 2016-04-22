@@ -19,7 +19,7 @@ package mode
 	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	
-	import Exporter.Exporter;
+	import exporter.Exporter;
 	
 	import packer.MaxRectPacker;
 	
@@ -71,10 +71,8 @@ package mode
 			switch(event.keyCode)
 			{
 				case Keyboard.BACK:
-					trace("back");
 					event.preventDefault();
-					_YSExt.alert("a");
-					
+					_YSExt.alert("exit");					
 					break;
 			}
 		}
@@ -102,7 +100,7 @@ package mode
 				_spriteSheet = new SpriteSheet(_stageWidth, _stageHeight);
 				_spriteSheet.init(_guiArray);
 				_spriteSheet.addEventListener("selectSheet", onClickSheetSelectButton);
-				
+				_spriteSheet.addEventListener("loadSheet", onLoadSheet);
 				addChild(_spriteSheet);
 				
 				_animationMode = new AnimationMode(_stageWidth, _stageHeight);
@@ -248,7 +246,6 @@ package mode
 		{
 			trace("타이머 종료");
 			_animationMode.currentIndex = 0;
-			
 			_animationMode.timer.removeEventListener(TimerEvent.TIMER, onTimerStart);
 			_animationMode.timer.removeEventListener(TimerEvent.TIMER_COMPLETE, onTimerStop);
 			
@@ -393,7 +390,7 @@ package mode
 			{
 				array.push(tempDic[key].name);
 			}
-			array.sort(FunctionMgr.compareNameAscending);
+			array.sort(FunctionMgr.compareAscending);
 			_YSExt.selectImage(array, onImageSelected);
 		}
 		
@@ -408,24 +405,33 @@ package mode
 		
 		//스프라이트시트 선택 버튼 클릭
 		private function onClickSheetSelectButton():void
-		{
+		{			
 			var array:Array = new Array();
 			var tempDic:Dictionary = _spriteSheet.spriteSheetDic;
 			for(var key:String in tempDic)
 			{
 				array.push(tempDic[key].name);
 			}
-			array.sort(FunctionMgr.compareNameAscending);
+			array.sort(FunctionMgr.compareAscending);
 			_YSExt.selectImage(array, onSheetSelected);
 		}
 		
 		//이미지가 선택되었다면 작동하는 콜백 메소드
 		private function onSheetSelected(name:String):void
 		{	
+			_animationMode.currentIndex = 0;
+			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
+			
 			_spriteSheet.currentSheetImage.texture = _spriteSheet.spriteSheetDic[name].image.texture;
 			_spriteSheet.currentSheetImage.width = _spriteSheet.spriteSheetDic[name].rect.width * _stageWidth / 2000;
 			_spriteSheet.currentSheetImage.height = _spriteSheet.spriteSheetDic[name].rect.height * _stageHeight / 2000;
 			_spriteSheet.currentTextField.text =  _spriteSheet.spriteSheetDic[name].name;
+		}
+		
+		private function onLoadSheet():void
+		{
+			_animationMode.currentIndex = 0;
+			_animationMode.timer = new Timer(_animationMode.delay, _spriteSheet.sheetImageDicAMode[_spriteSheet.currentTextField.text].length - _animationMode.currentIndex);
 		}
 	}
 }

@@ -7,6 +7,12 @@ package
 	public class FunctionMgr
 	{
 		
+		/**
+		 * 
+		 * @param text String
+		 * @return String
+		 * String을 맨 뒤에서부터 검사하여 처음 .이 나오면 . 이후의 부분을 .xml로 교체하는 메소드 
+		 */
 		public static function replaceExtensionPngToXml(text:String):String
 		{
 			var result:String = text;
@@ -17,6 +23,12 @@ package
 			return result;
 		}
 		
+		/**
+		 * 
+		 * @param text String
+		 * @return String
+		 * 마지막 "." 의 뒷부분을 제거해주는 메소드
+		 */
 		public static function removeExtension(text:String):String
 		{
 			var result:String = text;
@@ -24,10 +36,15 @@ package
 			result = result.substring(0, dot);			
 			
 			return result;
-		}
+		}		
 		
 		
-		
+		/**
+		 * 
+		 * @param dic Dictionary
+		 * @return int 
+		 * 해당 Dictionary 안에 몇개의 키값이 들어있는지 검사하여 리턴하는 메소드
+		 */
 		public static function getDictionaryLength(dic:Dictionary):int
 		{
 			var length:int;
@@ -38,15 +55,7 @@ package
 			}
 			
 			return length;
-		}
-		
-		public static function makeVisibleFalse(vector:Vector.<Sprite>):void
-		{
-			for(var i:int = 0; i<vector.length; ++i)
-			{
-				vector[i].visible = false;
-			}
-		}
+		}		
 		
 		/**
 		 * 
@@ -74,7 +83,14 @@ package
 			} 
 		}
 		
-		public static function compareNameAscending(a, b):int
+		/**
+		 * 
+		 * @param a any type
+		 * @param b any type
+		 * @return 
+		 * 오름차순 정렬 메소드
+		 */
+		public static function compareAscending(a, b):int
 		{
 			if (b > a) 
 			{ 
@@ -109,6 +125,12 @@ package
 		}
 		
 		
+		/**
+		 * 
+		 * @param sourceName String
+		 * @return String
+		 * 파일명에서 쓸데없는 부분을 모두 제거하는 메소드
+		 */
 		public static function getRealName(sourceName:String):String
 		{
 			var name:String = sourceName;

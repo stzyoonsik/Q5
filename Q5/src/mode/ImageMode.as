@@ -1,6 +1,5 @@
 package mode
-{
-	
+{	
 	import flash.display.Bitmap;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
@@ -23,12 +22,12 @@ package mode
 	{
 		private var _addButton:Sprite = new Sprite();
 		private var _imageSaveButton:Sprite = new Sprite();
-		private var _sheetSaveButton:Sprite = new Sprite();
-		private var _currentPage:int;
-		private var _pieceImage:Image = new Image(null);									//화면에 보여주기 용 스프라이트			
-		private var _selectButton:Image;											//상하화살표버튼
-		private var _currentImageTextField:TextField;										//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
+		private var _sheetSaveButton:Sprite = new Sprite();		
 		
+		private var _pieceImage:Image = new Image(null);									//화면에 보여주기 용 이미지			
+		private var _selectButton:Image;													//선택버튼
+		private var _currentImageTextField:TextField;										//현재 선택된 이미지의 이름을 나타내기 위한 텍스트필드
+				
 		private var _stageWidth:int;
 		private var _stageHeight:int;
 		
@@ -37,62 +36,23 @@ package mode
 		
 		public function ImageMode(stageWidth:int, stageHeight:int)
 		{
-			_stageWidth = stageWidth;
-			_stageHeight = stageHeight;
-			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
-			
+			_stageWidth = stageWidth / 10;
+			_stageHeight = stageHeight / 10;
+			addEventListener(TouchEvent.TOUCH, onAddedEvents);				
 		}
 		
 
-		public function get addedImageVector():Vector.<ImageData>
-		{
-			return _addedImageVector;
-		}
+		public function get addedImageVector():Vector.<ImageData>{ return _addedImageVector; }
+		public function set addedImageVector(value:Vector.<ImageData>):void{ _addedImageVector = value; }
 
-		public function set addedImageVector(value:Vector.<ImageData>):void
-		{
-			_addedImageVector = value;
-		}
+		public function get selectSpriteSheetButton():Image{ return _selectButton; }
+		public function set selectSpriteSheetButton(value:Image):void{ _selectButton = value; }
 
-		public function get selectSpriteSheetButton():Image
-		{
-			return _selectButton;
-		}
-
-		public function set selectSpriteSheetButton(value:Image):void
-		{
-			_selectButton = value;
-		}
-
-		public function get currentImageTextField():TextField
-		{
-			return _currentImageTextField;
-		}
+		public function get currentImageTextField():TextField{ return _currentImageTextField; }		
+		public function set currentImageTextField(value:TextField):void{ _currentImageTextField = value; }		
 		
-		public function set currentImageTextField(value:TextField):void
-		{
-			_currentImageTextField = value;
-		}
-		
-		public function get currentPage():int
-		{
-			return _currentPage;
-		}
-		
-		public function set currentPage(value:int):void
-		{
-			_currentPage = value;
-		}
-		
-		public function get pieceImage():Image
-		{
-			return _pieceImage;
-		}
-		
-		public function set pieceImage(value:Image):void
-		{
-			_pieceImage = value;
-		}
+		public function get pieceImage():Image{ return _pieceImage; }		
+		public function set pieceImage(value:Image):void{ _pieceImage = value; }
 
 		
 		public function init(guiArray:Vector.<Image>):void
@@ -101,13 +61,12 @@ package mode
 			for(var i:int = 0; i<guiArray.length; ++i)
 			{
 				switch(guiArray[i].name)
-				{
-					
+				{					
 					case "selectButton":
 						_selectButton = new Image(guiArray[i].texture);
-						_selectButton.x = _stageWidth / 10 * 6.5;
-						_selectButton.y = _stageHeight / 10 * 7;
-						_selectButton.width = _stageWidth / 10 ;
+						_selectButton.x = _stageWidth * 6.5;
+						_selectButton.y = _stageHeight * 7;
+						_selectButton.width = _stageWidth;
 						_selectButton.height = _selectButton.width;
 						_selectButton.alignPivot("center", "center");
 						
@@ -116,46 +75,46 @@ package mode
 					
 					case "sheetSaveButton":
 						image = new Image(guiArray[i].texture);
-						image.width = _stageWidth / 10;
+						image.width = _stageWidth;
 						image.height = image.width;
 						_sheetSaveButton.addChild(image);
 						
-						_sheetSaveButton.x = _stageWidth / 10 * 8.5;
-						_sheetSaveButton.y = _stageHeight / 10 * 8.25;						
+						_sheetSaveButton.x = _stageWidth * 8.5;
+						_sheetSaveButton.y = _stageHeight * 8.25;						
 						_sheetSaveButton.alignPivot("center", "center");
 						addChild(_sheetSaveButton);
 						break;
 					
 					case "imageSaveButton":
 						image = new Image(guiArray[i].texture);
-						image.width = _stageWidth / 10;
+						image.width = _stageWidth ;
 						image.height = image.width;
 						_imageSaveButton.addChild(image);
 						
-						_imageSaveButton.x = _stageWidth / 10 * 9.5;
-						_imageSaveButton.y = _stageHeight / 10 * 8.25;						
+						_imageSaveButton.x = _stageWidth * 9.5;
+						_imageSaveButton.y = _stageHeight * 8.25;						
 						_imageSaveButton.alignPivot("center", "center");
 						addChild(_imageSaveButton);
 						break;
 					
 					case "addButton":
 						image = new Image(guiArray[i].texture);
-						image.width = _stageWidth / 10;
+						image.width = _stageWidth ;
 						image.height = image.width;
 						_addButton.addChild(image);
 						
-						_addButton.x = _stageWidth / 10 * 9;
-						_addButton.y = _stageHeight / 10 * 6.25;						
+						_addButton.x = _stageWidth * 9;
+						_addButton.y = _stageHeight * 6.25;						
 						_addButton.alignPivot("center", "center");
 						addChild(_addButton);					
 						break;
 				}
 			}
-			_currentImageTextField = new TextField(_stageWidth / 10, _stageHeight / 10, "");
+			_currentImageTextField = new TextField(_stageWidth , _stageHeight , "");
 			_currentImageTextField.format.bold = true;
 			_currentImageTextField.format.size = 50;
-			_currentImageTextField.x = _stageWidth / 10 * 7.5;
-			_currentImageTextField.y = _stageHeight / 10 * 5;
+			_currentImageTextField.x = _stageWidth * 7.5;
+			_currentImageTextField.y = _stageHeight * 5;
 			_currentImageTextField.alignPivot("center", "center");
 			addChild(_currentImageTextField);
 			
@@ -163,8 +122,8 @@ package mode
 			_pieceImage.width = 0;
 			_pieceImage.height = 0;
 			_pieceImage.alignPivot("center", "center");
-			_pieceImage.x = _stageWidth / 10 * 7.5;
-			_pieceImage.y = _stageHeight / 10 * 3;	
+			_pieceImage.x = _stageWidth * 7.5;
+			_pieceImage.y = _stageHeight * 3;	
 			
 			addChild(_pieceImage);
 		}
@@ -176,29 +135,33 @@ package mode
 		 */
 		private function onAddedEvents(event:starling.events.Event):void
 		{				
-			_selectButton.addEventListener(TouchEvent.TOUCH, onClickSpriteListButton);
+			_selectButton.addEventListener(TouchEvent.TOUCH, onClickSelectButton);
 			_imageSaveButton.addEventListener(TouchEvent.TOUCH, onClickImageSaveButton);
 			_sheetSaveButton.addEventListener(TouchEvent.TOUCH, onClickSheetSaveButton);
 			_addButton.addEventListener(TouchEvent.TOUCH, onClickAddButton);
-		}
-		
-
+		}		
 		
 		/**
 		 * 
 		 * @param event 화면 우측 하단 스프라이트리스트버튼 클릭
 		 * 5개 단위의 스프라이트 리스트를 띄워줌
 		 */
-		private function onClickSpriteListButton(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(_selectButton, TouchPhase.ENDED);
+		private function onClickSelectButton(event:TouchEvent):void
+		{			
+			var touch:Touch = event.getTouch(_selectButton, TouchPhase.BEGAN);
 			if(touch)
 			{
+				
+				_selectButton.scale = 0.8;
+			}
+			
+			touch = event.getTouch(_selectButton, TouchPhase.ENDED);
+			if(touch)
+			{
+				_selectButton.scale = 1;			
 				dispatchEvent(new Event("selectImage"));
 			}
 		}
-		
-
 		
 		/**
 		 * 
@@ -269,14 +232,18 @@ package mode
 			}
 		}
 		
+		/**
+		 * 
+		 * @param event 선택된 파일들이 담긴 배열
+		 * 추가할 이미지들을 로드한다
+		 */
 		private function onFilesSelected(event:FileListEvent):void
 		{
 			_numberOfAddedPNG = 0;
 			_numberOfAddedPNG += event.files.length;
 			
 			for (var i:int = 0; i < event.files.length; ++i) 
-			{
-				//trace(event.files[i].nativePath);
+			{				
 				//PNG 로드
 				var loader:Loader = new Loader();				
 				loader.load(new URLRequest(event.files[i].url));				
@@ -287,6 +254,11 @@ package mode
 			_addedImageVector = new Vector.<ImageData>;
 		}
 		
+		/**
+		 * 
+		 * @param event 이벤트 종료
+		 * 정보를 담아 벡터에 푸쉬하는 메소드
+		 */
 		private function onLoaderComplete(event:flash.events.Event):void
 		{
 			var loaderInfo:LoaderInfo = LoaderInfo(event.target);
@@ -296,11 +268,7 @@ package mode
 			var image:Image = new Image(texture);
 			var imageData:ImageData = new ImageData();
 			
-			
 			var name:String = loaderInfo.url;
-//			var slash:int = name.lastIndexOf("/");
-//			var dot:int = name.lastIndexOf(".");
-//			name = name.substring(slash + 1, dot);
 			name = FunctionMgr.getRealName(name);
 			
 			imageData.name = name;
@@ -314,7 +282,6 @@ package mode
 			{
 				dispatchEvent(new Event("add"));
 			}
-		
 		}
 		
 		private function onLoaderFailed(event:flash.events.Event):void

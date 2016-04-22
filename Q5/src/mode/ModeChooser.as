@@ -23,8 +23,8 @@ package mode
 		
 		public function ModeChooser(stageWidth:int, stageHeight:int)
 		{
-			_stageWidth = stageWidth;
-			_stageHeight = stageHeight;
+			_stageWidth = stageWidth / 10;
+			_stageHeight = stageHeight / 10;
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 		}
 		
@@ -35,7 +35,6 @@ package mode
 		 */
 		private function onAddedEvents(event:starling.events.Event):void
 		{
-			//trace(event.target);
 			_animationModeOnButton.addEventListener(TouchEvent.TOUCH, onTouchRadioAnimationModeOn);
 			_animationModeOffButton.addEventListener(TouchEvent.TOUCH, onTouchRadioAnimationModeOff);
 			
@@ -45,25 +44,24 @@ package mode
 		
 		public function init(guiArray:Vector.<Image>):void
 		{
-			//trace("init");
 			for(var i:int = 0; i<guiArray.length; ++i)
 			{
 				switch(guiArray[i].name)
 				{
 					case "radioButtonOff":
 						_animationModeOffButton = new Image(guiArray[i].texture);
-						_animationModeOffButton.x = _stageWidth / 10 * 4.5;
-						_animationModeOffButton.y = _stageHeight / 10 * 6;						
-						_animationModeOffButton.width = _stageWidth / 10 / 2;
+						_animationModeOffButton.x = _stageWidth * 4.5;
+						_animationModeOffButton.y = _stageHeight * 6;						
+						_animationModeOffButton.width = _stageWidth / 2;
 						_animationModeOffButton.height = _animationModeOffButton.width;
 						_animationModeOffButton.alignPivot("center", "center");
 						_animationModeOffButton.visible = false;
 						addChild(_animationModeOffButton);
 						
 						_imageModeOffButton = new Image(guiArray[i].texture);
-						_imageModeOffButton.x = _stageWidth / 10 * 4.5;
-						_imageModeOffButton.y = _stageHeight / 10 * 8;
-						_imageModeOffButton.width = _stageWidth / 10 / 2;
+						_imageModeOffButton.x = _stageWidth * 4.5;
+						_imageModeOffButton.y = _stageHeight * 8;
+						_imageModeOffButton.width = _stageWidth / 2;
 						_imageModeOffButton.height = _imageModeOffButton.width;
 						_imageModeOffButton.alignPivot("center", "center");
 						_imageModeOffButton.visible = true;
@@ -71,18 +69,18 @@ package mode
 						break;
 					case "radioButtonOn":
 						_animationModeOnButton = new Image(guiArray[i].texture);
-						_animationModeOnButton.x = _stageWidth / 10 * 4.5;
-						_animationModeOnButton.y = _stageHeight / 10 * 6;
-						_animationModeOnButton.width = _stageWidth / 10 / 2;
+						_animationModeOnButton.x = _stageWidth * 4.5;
+						_animationModeOnButton.y = _stageHeight * 6;
+						_animationModeOnButton.width = _stageWidth / 2;
 						_animationModeOnButton.height = _animationModeOnButton.width;
 						_animationModeOnButton.alignPivot("center", "center");
 						_animationModeOnButton.visible = true;
 						addChild(_animationModeOnButton);
 						
 						_imageModeOnButton = new Image(guiArray[i].texture);
-						_imageModeOnButton.x = _stageWidth / 10 * 4.5;
-						_imageModeOnButton.y = _stageHeight / 10 * 8;
-						_imageModeOnButton.width = _stageWidth / 10 / 2;
+						_imageModeOnButton.x = _stageWidth * 4.5;
+						_imageModeOnButton.y = _stageHeight * 8;
+						_imageModeOnButton.width = _stageWidth / 2;
 						_imageModeOnButton.height = _imageModeOnButton.width;
 						_imageModeOnButton.alignPivot("center", "center");
 						_imageModeOnButton.visible = false;
@@ -92,20 +90,18 @@ package mode
 				}
 			}
 			
-			_animationModeText = new TextField(_stageWidth / 10, _stageHeight / 10, "Animation Mode");
+			_animationModeText = new TextField(_stageWidth, _stageHeight, "Animation Mode");
 			_animationModeText.format.size = 40;			
-			_animationModeText.x = _stageWidth / 10 * 4.5;
-			_animationModeText.y = _stageHeight / 10 * 6.75;			
+			_animationModeText.x = _stageWidth * 4.5;
+			_animationModeText.y = _stageHeight * 6.75;			
 			_animationModeText.alignPivot("center", "center");
-			//_animationModeText.border = true;
 			addChild(_animationModeText);
 			
-			_imageModeText = new TextField(_stageWidth / 10, _stageHeight / 10, "Image Mode");
+			_imageModeText = new TextField(_stageWidth, _stageHeight, "Image Mode");
 			_imageModeText.format.size = 40;
-			_imageModeText.x = _stageWidth / 10 * 4.5;
-			_imageModeText.y = _stageHeight / 10 * 8.75;
+			_imageModeText.x = _stageWidth * 4.5;
+			_imageModeText.y = _stageHeight * 8.75;
 			_imageModeText.alignPivot("center", "center");
-			//_imageModeText.border = true;
 			addChild(_imageModeText);
 			
 		}
@@ -119,7 +115,6 @@ package mode
 			var touch:Touch = event.getTouch(_animationModeOnButton, TouchPhase.ENDED);
 			if(touch)
 			{
-				//trace("라디오 터치");
 				_animationModeOnButton.visible = true;
 				_animationModeOffButton.visible = false;
 				

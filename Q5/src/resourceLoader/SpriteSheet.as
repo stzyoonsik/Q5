@@ -46,80 +46,31 @@ package resourceLoader
 		
 		public function SpriteSheet(stageWidth:int, stageHeight:int)
 		{		
-			_stageWidth = stageWidth;
-			_stageHeight = stageHeight;
+			_stageWidth = stageWidth / 10;
+			_stageHeight = stageHeight / 10;
 			addEventListener(TouchEvent.TOUCH, onAddedEvents);	
 		}
 
-		public function get currentSheetImage():Image
-		{
-			return _currentSheetImage;
-		}
+		public function get currentSheetImage():Image{ return _currentSheetImage; }
+		public function set currentSheetImage(value:Image):void{ _currentSheetImage = value; }
 
-		public function set currentSheetImage(value:Image):void
-		{
-			_currentSheetImage = value;
-		}
+		public function get spriteSheetDic():Dictionary{ return _spriteSheetDic; }
+		public function set spriteSheetDic(value:Dictionary):void{ _spriteSheetDic = value;	}
 
-		public function get spriteSheetDic():Dictionary
-		{
-			return _spriteSheetDic;
-		}
+		public function get pieceImageVectorAMode():Vector.<Image>{ return _pieceImageVectorAMode; }
+		public function set pieceImageVectorAMode(value:Vector.<Image>):void{ _pieceImageVectorAMode = value; }
+		
+		public function get sheetImageDicAMode():Dictionary{ return _sheetImageDicAMode; }
+		public function set sheetImageDicAMode(value:Dictionary):void{ _sheetImageDicAMode = value; }
 
-		public function set spriteSheetDic(value:Dictionary):void
-		{
-			_spriteSheetDic = value;
-		}
+		public function get currentTextField():TextField{ return _currentTextField; }
+		public function set currentTextField(value:TextField):void{	_currentTextField = value; }
 
-		public function get pieceImageVectorAMode():Vector.<Image>
-		{
-			return _pieceImageVectorAMode;
-		}
+		public function get pieceImageDicIMode():Dictionary{ return _pieceImageDicIMode; }
+		public function set pieceImageDicIMode(value:Dictionary):void{ _pieceImageDicIMode = value; }
 
-		public function set pieceImageVectorAMode(value:Vector.<Image>):void
-		{
-			_pieceImageVectorAMode = value;
-		}
-
-		public function get sheetImageDicAMode():Dictionary
-		{
-			return _sheetImageDicAMode;
-		}
-
-		public function set sheetImageDicAMode(value:Dictionary):void
-		{
-			_sheetImageDicAMode = value;
-		}
-
-		public function get currentTextField():TextField
-		{
-			return _currentTextField;
-		}
-
-		public function set currentTextField(value:TextField):void
-		{
-			_currentTextField = value;
-		}
-
-		public function get pieceImageDicIMode():Dictionary
-		{
-			return _pieceImageDicIMode;
-		}
-
-		public function set pieceImageDicIMode(value:Dictionary):void
-		{
-			_pieceImageDicIMode = value;
-		}
-
-		public function get sheetImageDicIMode():Dictionary
-		{
-			return _sheetImageDicIMode;
-		}
-
-		public function set sheetImageDicIMode(value:Dictionary):void
-		{
-			_sheetImageDicIMode = value;
-		}
+		public function get sheetImageDicIMode():Dictionary{ return _sheetImageDicIMode; }
+		public function set sheetImageDicIMode(value:Dictionary):void{ _sheetImageDicIMode = value; }
 
 		/**
 		 * 
@@ -135,24 +86,24 @@ package resourceLoader
 				{
 					case "loadButton":
 						image = new Image(guiArray[i].texture);
-						image.width = _stageWidth / 10 * 3;
+						image.width = _stageWidth * 3;
 						image.height = image.width / 4;
 						_loadSpriteSheetsButton.addChild(image);
 						
-						_loadSpriteSheetsButton.x = _stageWidth / 10 * 2;
-						_loadSpriteSheetsButton.y = _stageHeight / 10 * 6.5;
+						_loadSpriteSheetsButton.x = _stageWidth * 2;
+						_loadSpriteSheetsButton.y = _stageHeight * 6.5;
 						_loadSpriteSheetsButton.alignPivot("center", "center");
 						addChild(_loadSpriteSheetsButton);
 						break;
 					
 					case "selectButton":
 						image = new Image(guiArray[i].texture);
-						image.width = _stageWidth / 10 / 3;
+						image.width = _stageWidth / 3;
 						image.height = image.width;
 						_selectSpriteSheetButton.addChild(image);
 						
-						_selectSpriteSheetButton.x = _stageWidth / 10 * 3.5;
-						_selectSpriteSheetButton.y = _stageHeight / 10 * 7.5;
+						_selectSpriteSheetButton.x = _stageWidth * 3.5;
+						_selectSpriteSheetButton.y = _stageHeight * 7.5;
 						_selectSpriteSheetButton.alignPivot("center", "center");
 						_selectSpriteSheetButton.visible = false;
 						addChild(_selectSpriteSheetButton);						
@@ -160,11 +111,11 @@ package resourceLoader
 				}
 			}
 			
-			_currentTextField = new TextField(_stageWidth / 10 * 2.5, _stageHeight / 10 / 2, "");
+			_currentTextField = new TextField(_stageWidth * 2.5, _stageHeight / 2, "");
 			_currentTextField.format.size = 50;
 			_currentTextField.format.bold = true;
-			_currentTextField.x = _stageWidth / 10 * 2;
-			_currentTextField.y = _stageHeight / 10 * 7.5;
+			_currentTextField.x = _stageWidth * 2;
+			_currentTextField.y = _stageHeight * 7.5;
 			_currentTextField.alignPivot("center", "center");
 			_currentTextField.border = true;
 			addChild(_currentTextField);
@@ -173,18 +124,16 @@ package resourceLoader
 			_currentSheetImage.width = 0;
 			_currentSheetImage.height = 0;
 			_currentSheetImage.alignPivot("center", "center");
-			_currentSheetImage.x = _stageWidth / 10 * 2.5;
-			_currentSheetImage.y = _stageHeight / 10 * 3;	
-			
+			_currentSheetImage.x = _stageWidth * 2.5;
+			_currentSheetImage.y = _stageHeight * 3;				
 			addChild(_currentSheetImage);
 		
 		}
 		
 		private function onAddedEvents(event:starling.events.Event):void
 		{		
-			_loadSpriteSheetsButton.addEventListener(TouchEvent.TOUCH, onLoadSpriteSheetsButton);	
-			_selectSpriteSheetButton.addEventListener(TouchEvent.TOUCH, onClickSheetSelectButton);
-			
+			_loadSpriteSheetsButton.addEventListener(TouchEvent.TOUCH, onClickLoadSpriteSheetsButton);	
+			_selectSpriteSheetButton.addEventListener(TouchEvent.TOUCH, onClickSheetSelectButton);			
 		}
 		
 		
@@ -207,7 +156,7 @@ package resourceLoader
 		 * @param event 마우스 클릭
 		 * 클릭이 발생했을 때 버튼 이미지의 크기를 신축하고, 스프라이트 시트를 가져오는 메소드
 		 */
-		private function onLoadSpriteSheetsButton(event:TouchEvent):void
+		private function onClickLoadSpriteSheetsButton(event:TouchEvent):void
 		{
 			//trace("로드스프라이트시트");
 			var touch:Touch = event.getTouch(_loadSpriteSheetsButton, TouchPhase.BEGAN);
@@ -224,7 +173,7 @@ package resourceLoader
 				//이미지 파일만 여는 예외처리 필요
 				var file:File = File.applicationDirectory;
 				file.browseForOpenMultiple("Select SpriteSheet PNG Files");
-				file.addEventListener(FileListEvent.SELECT_MULTIPLE, onFilesSelected);
+				file.addEventListener(FileListEvent.SELECT_MULTIPLE, onFilesSelected);				
 			}
 		}
 		
@@ -266,8 +215,8 @@ package resourceLoader
 			if(_numberOfPNG == FunctionMgr.getDictionaryLength(_spriteSheetDic) && _numberOfXML == FunctionMgr.getDictionaryLength(_xmlDic))
 			{
 				_currentSheetImage.texture = _spriteSheetDic[_currentTextField.text].image.texture;
-				_currentSheetImage.width = _spriteSheetDic[_currentTextField.text].rect.width * _stageWidth / 2500;
-				_currentSheetImage.height = _spriteSheetDic[_currentTextField.text].rect.height * _stageHeight / 2500;
+				_currentSheetImage.width = _spriteSheetDic[_currentTextField.text].rect.width * _stageWidth / 250;
+				_currentSheetImage.height = _spriteSheetDic[_currentTextField.text].rect.height * _stageHeight / 250;
 				
 				readXML();
 			}
@@ -328,6 +277,8 @@ package resourceLoader
 				_sheetImageDicIMode[key] = _pieceImageDicIMode;
 				_sheetImageDicAMode[key] = _pieceImageVectorAMode;
 			}
+			
+			dispatchEvent(new Event("loadSheet"));
 		}
 		
 		
